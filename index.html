@@ -303,34 +303,18 @@
   .modal-btn.secondary { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
   .modal-btn:hover { opacity: 0.85; }
 
-  /* SWIPE / DELETE */
-  .ing-row-wrap { position: relative; overflow: hidden; border-radius: 10px; margin-bottom: 0; }
-  .delete-bg {
-    position: absolute; right: 0; top: 0; bottom: 0; width: 72px;
-    background: var(--red); display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 22px; border-radius: 0 10px 10px 0;
-    pointer-events: none; opacity: 0; transition: opacity 0.15s;
-  }
-  .ing-row-wrap.revealing .delete-bg { opacity: 1; }
-  .ing-row {
-    position: relative; transition: transform 0.22s ease;
-    touch-action: pan-y; /* permite scroll vertical, não cancela touch */
-    user-select: none;
-  }
-  .ing-row.swiping { transition: none; }
-  .ing-row.swipe-out { transform: translateX(-100%) !important; opacity: 0; transition: transform 0.25s ease, opacity 0.2s; }
+  /* WRAPPER E BOTÃO REMOVER */
+  .ing-row-wrap { border-radius: 10px; }
+  .ing-row { position: relative; }
+  .ing-row.swipe-out { opacity: 0; transition: opacity 0.2s; }
 
-  /* Botão × — só desktop via hover, não aparece em touch */
   .remove-btn {
     background: none; border: 1px solid transparent; color: var(--muted); cursor: pointer;
     font-size: 16px; padding: 3px 6px; line-height: 1; border-radius: 5px;
-    flex-shrink: 0; opacity: 0; transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+    flex-shrink: 0; transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+    opacity: 0.5;
   }
-  @media (hover: hover) {
-    /* Só em dispositivos com hover real (mouse) */
-    .ing-row:hover .remove-btn { opacity: 0.7; }
-    .remove-btn:hover { opacity: 1 !important; color: var(--red) !important; border-color: rgba(255,71,87,0.4); }
-  }
+  .remove-btn:hover { opacity: 1; color: var(--red); border-color: rgba(255,71,87,0.4); }
 
 
 
@@ -1022,89 +1006,12 @@ function renderIngRow(item, gramsObj, onChange, removable=false) {
   // Criar wrapper para swipe
   const wrap = document.createElement('div');
   wrap.className = 'ing-row-wrap';
-  const deleteBg = document.createElement('div');
-  deleteBg.className = 'delete-bg';
-  deleteBg.innerHTML = '🗑';
-  wrap.appendChild(deleteBg);
   wrap.appendChild(row);
 
   row.innerHTML = buildHTML(g);
 
-  // Botão × — só desktop com hover (não dispara em touch)
-  const removeBtn = row.querySelector('.remove-btn');
-  removeBtn.addEventListener('click', e => {
-    // Ignorar se veio de um toque (touch device)
-    if (e.pointerType === 'touch') return;
-    removeItem();
-  });
-
-  // Swipe-to-delete (touch) ─ detecção cuidadosa para não conflitar com scroll
-  let swipeStartX = 0, swipeStartY = 0, swipeCurrentX = 0;
-  let swipeActive = false, swipeLocked = false;
-
-  row.addEventListener('touchstart', e => {
-    swipeStartX = e.touches[0].clientX;
-    swipeStartY = e.touches[0].clientY;
-    swipeCurrentX = swipeStartX;
-    swipeActive = false;
-    swipeLocked = false;
-    row.style.transition = 'none';
-  }, { passive: true });
-
-  row.addEventListener('touchmove', e => {
-    const dx = e.touches[0].clientX - swipeStartX;
-    const dy = e.touches[0].clientY - swipeStartY;
-
-    // Se ainda não definiu direção
-    if (!swipeActive && !swipeLocked) {
-      if (Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-        // Movimento horizontal dominante → ativar swipe
-        swipeActive = true;
-      } else if (Math.abs(dy) > 6) {
-        // Movimento vertical dominante → travar (é scroll)
-        swipeLocked = true;
-      }
-    }
-
-    if (!swipeActive || swipeLocked) return;
-
-    swipeCurrentX = e.touches[0].clientX;
-    const totalDx = swipeCurrentX - swipeStartX;
-
-    if (totalDx < 0) {
-      const clamped = Math.max(totalDx, -72);
-      row.classList.add('swiping');
-      row.style.transform = `translateX(${clamped}px)`;
-      // Mostrar fundo vermelho proporcional
-      if (Math.abs(clamped) > 10) wrap.classList.add('revealing');
-    }
-  }, { passive: true });
-
-  row.addEventListener('touchend', () => {
-    row.style.transition = '';
-    row.classList.remove('swiping');
-    const totalDx = swipeCurrentX - swipeStartX;
-
-    if (swipeActive && !swipeLocked && totalDx < -45) {
-      // Swipe suficiente → deletar
-      removeItem();
-    } else {
-      // Swipe insuficiente → voltar
-      row.style.transform = '';
-      wrap.classList.remove('revealing');
-    }
-    swipeActive = false;
-    swipeLocked = false;
-  });
-
-  row.addEventListener('touchcancel', () => {
-    row.style.transition = '';
-    row.style.transform = '';
-    row.classList.remove('swiping');
-    wrap.classList.remove('revealing');
-    swipeActive = false;
-    swipeLocked = false;
-  });
+  // Botão × — remover item
+  row.querySelector('.remove-btn').addEventListener('click', removeItem);
 
   function update(newG) {
     g = Math.max(0, Math.round(newG));
