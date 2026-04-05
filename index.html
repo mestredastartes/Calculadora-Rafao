@@ -310,11 +310,15 @@
 
   .remove-btn {
     background: none; border: 1px solid transparent; color: var(--muted); cursor: pointer;
-    font-size: 16px; padding: 3px 6px; line-height: 1; border-radius: 5px;
+    font-size: 16px; padding: 8px 10px; line-height: 1; border-radius: 5px;
     flex-shrink: 0; transition: opacity 0.15s, color 0.15s, border-color 0.15s;
-    opacity: 0.5;
+    opacity: 0.45; min-width: 36px; min-height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
   .remove-btn:hover { opacity: 1; color: var(--red); border-color: rgba(255,71,87,0.4); }
+  .remove-btn:active { opacity: 1; color: var(--red); background: rgba(255,71,87,0.1); }
 
 
 
@@ -1011,7 +1015,21 @@ function renderIngRow(item, gramsObj, onChange, removable=false) {
   row.innerHTML = buildHTML(g);
 
   // Botão × — remover item
-  row.querySelector('.remove-btn').addEventListener('click', removeItem);
+  row.querySelector('.remove-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    // Garantir que o clique/toque foi diretamente no botão × e não em outra área
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    // Verificar se o ponto de toque está dentro do botão (com margem de 8px)
+    const margin = 8;
+    const x = e.clientX, y = e.clientY;
+    if (
+      x >= rect.left - margin && x <= rect.right + margin &&
+      y >= rect.top - margin && y <= rect.bottom + margin
+    ) {
+      removeItem();
+    }
+  });
 
   function update(newG) {
     g = Math.max(0, Math.round(newG));
