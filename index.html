@@ -2,1703 +2,498 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora Nutricional — Rafael Schalins</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Nutrição — Rafael Schalins</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24; --border: #2a2a3a;
-    --accent: #e8ff47; --text: #f0f0f8; --muted: #6b6b88;
-    --green: #3ddc84; --red: #ff4757; --orange: #ffa502; --blue: #47c8ff;
-    --purple: #b847ff;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+:root{
+  --bg:#0a0a0f;--s:#111118;--s2:#1a1a24;--b:#2a2a3a;
+  --ac:#e8ff47;--tx:#f0f0f8;--mu:#6b6b88;
+  --gr:#3ddc84;--rd:#ff4757;--or:#ffa502;--bl:#47c8ff;--pu:#b847ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;}
 
-  /* HEADER STICKY — 1 linha */
-  .macro-header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(10,10,15,0.97); backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 8px 12px;
-  }
-  .macro-top-row {
-    display: flex; align-items: center; gap: 8px;
-  }
-  .header-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 2px;
-    color: var(--accent); flex-shrink: 0;
-  }
-  .macro-pills {
-    display: flex; gap: 4px; flex: 1; overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .macro-pills::-webkit-scrollbar { display: none; }
-  .macro-pill {
-    display: flex; flex-direction: column; align-items: center;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 8px; padding: 4px 8px; flex-shrink: 0; min-width: 48px;
-  }
-  .mp-val {
-    font-family: 'Bebas Neue', sans-serif; font-size: 17px; line-height: 1;
-    color: var(--accent);
-  }
-  .mp-lbl { font-size: 8px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);padding:8px 12px;}
+.hdr-row{display:flex;align-items:center;gap:8px;}
+.hdr-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--ac);flex-shrink:0;}
+.pills{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none;}
+.pills::-webkit-scrollbar{display:none;}
+.pill{display:flex;flex-direction:column;align-items:center;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:4px 8px;flex-shrink:0;min-width:48px;}
+.pv{font-family:'Bebas Neue',sans-serif;font-size:17px;line-height:1;color:var(--ac);}
+.pl{font-size:8px;color:var(--mu);letter-spacing:1px;text-transform:uppercase;}
 
-  /* BOTÃO SALVAR */
-  .save-btn {
-    background: none; border: 1px solid var(--border); border-radius: 8px;
-    padding: 5px 9px; font-size: 15px; cursor: pointer; flex-shrink: 0;
-    opacity: 0.3; transition: opacity 0.2s, border-color 0.2s;
-    pointer-events: none;
-  }
-  .save-btn.dirty { opacity: 1; pointer-events: all; border-color: var(--accent); animation: pulse-save 1.5s ease infinite; }
-  @keyframes pulse-save { 0%,100%{ box-shadow:0 0 0 0 rgba(232,255,71,0); } 50%{ box-shadow:0 0 0 4px rgba(232,255,71,0.2); } }
+/* ALERTA */
+.ap{max-width:820px;margin:0 auto;padding:6px 12px 0;}
+.ai{border-radius:10px;padding:10px 14px;display:none;}
+.ai.issues{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.25);}
+.ai.ok{background:rgba(61,220,132,.06);border:1px solid rgba(61,220,132,.25);}
+.at{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;margin-bottom:6px;}
+.ag-title{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px;opacity:.7;}
+.atags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px;}
+.atag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid;display:flex;align-items:center;gap:4px;}
+.atag.d{border-color:rgba(255,71,87,.5);color:var(--rd);background:rgba(255,71,87,.08);}
+.atag.w{border-color:rgba(255,165,2,.5);color:var(--or);background:rgba(255,165,2,.08);}
 
-  /* ALERTAS MICRO */
-  .alert-panel { max-width: 780px; margin: 0 auto; padding: 8px 16px 0; }
-  .alert-panel-inner {
-    border-radius: 10px; padding: 10px 14px; display: none;
-    transition: background 0.3s, border-color 0.3s;
-  }
-  .alert-panel-inner.has-issues {
-    background: rgba(255,71,87,0.06); border: 1px solid rgba(255,71,87,0.25);
-  }
-  .alert-panel-inner.all-ok {
-    background: rgba(61,220,132,0.06); border: 1px solid rgba(61,220,132,0.25);
-  }
-  .alert-panel-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 2px;
-    color: var(--red); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
-  }
-  /* ALERT GROUPS */
-  .alert-groups { display: flex; flex-direction: column; gap: 8px; }
-  .alert-group-title {
-    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
-    font-weight: 600; margin-bottom: 4px; opacity: 0.7;
-  }
-  .alert-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-  .alert-tag {
-    font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
-    border: 1px solid; display: flex; align-items: center; gap: 5px;
-    line-height: 1;
-  }
-  .alert-tag.danger { border-color: rgba(255,71,87,0.5); color: var(--red); background: rgba(255,71,87,0.08); }
-  .alert-tag.warn { border-color: rgba(255,165,2,0.5); color: var(--orange); background: rgba(255,165,2,0.08); }
-  .alert-all-ok {
-    font-size: 12px; color: var(--green); display: flex; align-items: center; gap: 6px;
-  }
-  .macro-box {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 12px; text-align: center;
-  }
+/* MAIN */
+.main{max-width:820px;margin:0 auto;padding:12px 12px 80px;}
 
-  /* MAIN */
-  .main { max-width: 780px; margin: 0 auto; padding: 12px 12px 80px; }
+/* SECTION */
+.sec{margin-bottom:22px;}
+.sec-hdr{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--ac);padding-bottom:8px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+.sec-hdr:hover{opacity:.85;}
+.chev{margin-left:auto;font-size:13px;color:var(--mu);transition:transform .25s;}
+.collapsed .chev{transform:rotate(-90deg);}
+.sec-body{overflow:hidden;transition:max-height .3s ease,opacity .25s;max-height:4000px;opacity:1;}
+.collapsed .sec-body{max-height:0;opacity:0;pointer-events:none;}
+.skcal{font-size:12px;color:var(--mu);margin-left:auto;font-family:'DM Sans',sans-serif;letter-spacing:0;}
 
-  /* SECTION */
-  .section { margin-bottom: 28px; }
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px;
-    color: var(--accent); margin-bottom: 4px; padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .section-kcal {
-    font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace;
-    margin-left: auto; font-family: 'DM Sans', sans-serif; letter-spacing: 0;
-  }
+/* INGREDIENTE */
+.ilist{display:flex;flex-direction:column;gap:4px;margin-top:6px;}
+.irow{background:var(--s);border:1px solid var(--b);border-radius:10px;padding:10px 12px;transition:border-color .15s;}
+.irow:hover{border-color:rgba(232,255,71,.2);}
+.itop{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.iname{font-size:13px;font-weight:600;flex:1;cursor:pointer;transition:color .15s;}
+.iname:hover{color:var(--ac);}
+.stepper{display:flex;align-items:center;background:var(--s2);border:1px solid var(--b);border-radius:8px;overflow:hidden;flex-shrink:0;}
+.sbtn{width:36px;height:36px;background:none;border:none;color:var(--ac);font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;}
+.sbtn:active{background:rgba(232,255,71,.15);}
+.sdisp{display:flex;flex-direction:column;align-items:center;padding:0 8px;min-width:54px;}
+.sval{font-family:'Bebas Neue',sans-serif;font-size:20px;line-height:1;color:var(--ac);cursor:text;border-radius:4px;padding:1px 4px;min-width:32px;text-align:center;display:inline-block;}
+.sval:focus{outline:none;background:rgba(232,255,71,.15);border-bottom:2px solid var(--ac);}
+.sunit{font-size:9px;color:var(--mu);letter-spacing:1px;}
+.chips{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{display:flex;align-items:center;gap:4px;background:var(--s2);border-radius:6px;padding:3px 8px;font-size:11px;font-family:'JetBrains Mono',monospace;}
+.cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 
-  /* INGREDIENT ROW — mobile first */
-  .ing-list { display: flex; flex-direction: column; gap: 4px; }
+/* SUPL / MED */
+.srow{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--s);border:1px solid var(--b);border-radius:8px;margin-bottom:3px;cursor:pointer;transition:border-color .15s;}
+.srow:hover{border-color:rgba(232,255,71,.2);}
+.sname{font-size:13px;font-weight:500;flex:1;}
+.sdose{font-size:11px;font-family:'JetBrains Mono',monospace;}
 
-  .ing-row {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 12px;
-    transition: border-color 0.15s;
-  }
-  .ing-row:hover { border-color: rgba(232,255,71,0.2); }
+/* MICRO */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:540px){.mgrid{grid-template-columns:1fr;}}
+.mgrp{background:var(--s);border:1px solid var(--b);border-radius:10px;overflow:hidden;}
+.mgrp-title{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;padding:8px 12px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:6px;}
+.mrow{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid rgba(42,42,58,.5);cursor:pointer;transition:background .1s;}
+.mrow:hover{background:rgba(232,255,71,.03);}
+.mrow:last-child{border-bottom:none;}
+.mname{font-size:11px;color:var(--mu);flex:1;}
+.mbar{width:60px;}
+.mtrack{height:3px;background:var(--b);border-radius:2px;overflow:hidden;}
+.mfill{height:100%;border-radius:2px;transition:width .4s;}
+.mval{font-family:'JetBrains Mono',monospace;font-size:10px;width:52px;text-align:right;}
+.mpct{font-size:10px;font-weight:600;width:36px;text-align:right;}
 
-  .ing-row-top {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 8px; margin-bottom: 8px;
-  }
-  .ing-name { font-size: 13px; font-weight: 600; flex: 1; }
+/* OBS */
+.ocard{border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid;}
+.otitle{font-size:13px;font-weight:600;margin-bottom:5px;}
+.otext{font-size:12px;color:var(--mu);line-height:1.7;}
 
-  /* Controle +/− */
-  .stepper {
-    display: flex; align-items: center; gap: 0;
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-    overflow: hidden; flex-shrink: 0;
-  }
-  .step-btn {
-    width: 38px; height: 38px; background: none; border: none;
-    color: var(--accent); font-size: 20px; font-weight: 700;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: background 0.1s; user-select: none; -webkit-user-select: none;
-    touch-action: manipulation;
-  }
-  .step-btn:active { background: rgba(232,255,71,0.15); }
-  .step-display {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 0 8px; min-width: 56px;
-  }
-  .step-val {
-    font-family: 'Bebas Neue', sans-serif; font-size: 20px; line-height: 1;
-    color: var(--accent);
-  }
-  .step-unit { font-size: 9px; color: var(--muted); letter-spacing: 1px; }
-
-  /* Input escondido (ainda funciona para edição direta em desktop) */
-  .gram-input-hidden {
-    position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;
-  }
-
-  /* Macros compactos abaixo */
-  .ing-row-macros {
-    display: flex; gap: 6px; flex-wrap: wrap;
-  }
-  .macro-chip {
-    display: flex; align-items: center; gap: 4px;
-    background: var(--surface2); border-radius: 6px;
-    padding: 3px 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace;
-  }
-  .macro-chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-  .macro-chip-val { font-weight: 600; }
-  .macro-chip-lbl { color: var(--muted); font-size: 9px; }
-
-  /* Headers (desktop only) */
-  .col-header {
-    font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase;
-    text-align: right; padding: 0 12px 4px;
-  }
-  .col-header:first-child { text-align: left; }
-  .col-header.gram-col { text-align: center; }
-
-  /* SUPLEMENTOS */
-  .supl-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 9px 12px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: 8px;
-    margin-bottom: 2px;
-  }
-  .supl-name { font-size: 13px; font-weight: 500; flex: 1; }
-  .supl-dose { font-size: 11px; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
-
-  /* MICRONUTRIENTES */
-  .micro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  @media (max-width: 540px) { .micro-grid { grid-template-columns: 1fr; } }
-  .micro-group { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .micro-group-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 2px;
-    padding: 8px 12px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 6px;
-  }
-  .micro-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 7px 12px; border-bottom: 1px solid rgba(42,42,58,0.5);
-  }
-  .micro-row:last-child { border-bottom: none; }
-  .micro-name { font-size: 11px; color: var(--muted); flex: 1; }
-  .micro-bar-wrap { width: 60px; }
-  .micro-bar-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .micro-bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
-  .micro-val { font-family: 'JetBrains Mono', monospace; font-size: 10px; width: 36px; text-align: right; }
-  .micro-pct { font-size: 10px; font-weight: 600; width: 36px; text-align: right; }
-
-  /* COL HEADERS — hidden on mobile */
-  .ing-headers { display: none; }
-  @media (min-width: 700px) {
-    .ing-headers {
-      display: grid; grid-template-columns: 1fr 110px 60px 60px 60px 56px;
-      gap: 6px; padding: 0 12px 4px; margin-top: 8px;
-    }
-  }
-
-  /* ALERT */
-  .alert-bar {
-    padding: 10px 14px; border-radius: 8px; font-size: 11px;
-    margin-bottom: 16px; display: flex; gap: 8px; align-items: center;
-    border: 1px solid;
-  }
-  .alert-bar.warn { background: rgba(255,165,2,0.07); border-color: rgba(255,165,2,0.3); color: #ffe5b3; }
-
-  /* COLLAPSIBLE SECTIONS */
-  .section-title {
-    cursor: pointer; user-select: none; -webkit-user-select: none;
-  }
-  .section-title:hover { opacity: 0.85; }
-  .section-chevron {
-    margin-left: auto; font-size: 14px; color: var(--muted);
-    transition: transform 0.25s ease; flex-shrink: 0;
-  }
-  .section.collapsed .section-chevron { transform: rotate(-90deg); }
-  .section-body { overflow: hidden; transition: max-height 0.3s ease, opacity 0.25s ease; max-height: 2000px; opacity: 1; }
-  .section.collapsed .section-body { max-height: 0; opacity: 0; pointer-events: none; }
-
-  /* EDITABLE STEP VALUE */
-  .step-val {
-    cursor: text; border-radius: 4px; padding: 1px 4px;
-    transition: background 0.15s;
-    min-width: 32px; text-align: center; display: inline-block;
-  }
-  .step-val:focus {
-    outline: none; background: rgba(232,255,71,0.15);
-    border-bottom: 2px solid var(--accent);
-  }
-
-  /* BOTÃO ADICIONAR */
-  .add-food-btn {
-    width: 100%; margin-top: 8px; padding: 10px;
-    background: none; border: 1px dashed var(--border);
-    border-radius: 8px; color: var(--muted); font-family: 'DM Sans', sans-serif;
-    font-size: 13px; cursor: pointer; transition: all 0.15s;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .add-food-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.04); }
-
-  /* MODAL OVERLAY */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-    z-index: 1000; display: flex; align-items: flex-end;
-    opacity: 0; pointer-events: none; transition: opacity 0.2s;
-  }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal-sheet {
-    width: 100%; max-height: 90vh; background: var(--surface);
-    border-radius: 16px 16px 0 0; border-top: 1px solid var(--border);
-    padding: 16px; overflow-y: auto;
-    transform: translateY(100%); transition: transform 0.25s ease;
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  .modal-overlay.open .modal-sheet { transform: translateY(0); }
-  .modal-handle {
-    width: 40px; height: 4px; background: var(--border);
-    border-radius: 2px; margin: 0 auto 4px;
-  }
-  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); }
-  .modal-search {
-    width: 100%; background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 14px; color: var(--text);
-    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
-    transition: border-color 0.15s;
-  }
-  .modal-search:focus { border-color: var(--accent); }
-  .search-results { display: flex; flex-direction: column; gap: 4px; max-height: 280px; overflow-y: auto; }
-  .search-result-item {
-    padding: 10px 12px; background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500;
-    display: flex; align-items: center; justify-content: space-between;
-    transition: border-color 0.1s;
-  }
-  .search-result-item:hover { border-color: var(--accent); color: var(--accent); }
-  .search-result-kcal { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
-
-
-  .modal-btn {
-    flex: 1; padding: 12px; border-radius: 8px; font-family: 'Bebas Neue', sans-serif;
-    font-size: 16px; letter-spacing: 1px; cursor: pointer; border: none; transition: opacity 0.15s;
-  }
-  .modal-btn.primary { background: var(--accent); color: #000; }
-  .modal-btn.secondary { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
-  .modal-btn:hover { opacity: 0.85; }
-
-  /* WRAPPER E BOTÃO REMOVER */
-  .ing-row-wrap { border-radius: 10px; }
-  .ing-row { position: relative; }
-  .ing-row.swipe-out { opacity: 0; transition: opacity 0.2s; }
-
-  .remove-btn {
-    background: none; border: 1px solid transparent; color: var(--muted); cursor: pointer;
-    font-size: 16px; padding: 8px 10px; line-height: 1; border-radius: 5px;
-    flex-shrink: 0; transition: opacity 0.15s, color 0.15s, border-color 0.15s;
-    opacity: 0.45; min-width: 36px; min-height: 36px;
-    display: flex; align-items: center; justify-content: center;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-  }
-  .remove-btn:hover { opacity: 1; color: var(--red); border-color: rgba(255,71,87,0.4); }
-  .remove-btn:active { opacity: 1; color: var(--red); background: rgba(255,71,87,0.1); }
-
-
-
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:1000;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.sheet{width:100%;max-height:88vh;background:var(--s);border-radius:16px 16px 0 0;border-top:1px solid var(--b);padding:16px;overflow-y:auto;transform:translateY(100%);transition:transform .25s ease;}
+.overlay.open .sheet{transform:translateY(0);}
+.handle{width:40px;height:4px;background:var(--b);border-radius:2px;margin:0 auto 12px;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--ac);margin-bottom:12px;}
+.modal-body{font-size:13px;color:var(--mu);line-height:1.8;}
+.modal-body strong{color:var(--tx);}
+.modal-close{width:100%;margin-top:14px;padding:11px;background:var(--s2);border:1px solid var(--b);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--mu);cursor:pointer;}
+.modal-close:hover{color:var(--tx);}
+.warn-bar{padding:10px 14px;border-radius:8px;font-size:11px;margin-bottom:12px;background:rgba(255,165,2,.07);border:1px solid rgba(255,165,2,.3);color:#ffe5b3;}
 </style>
 </head>
 <body>
 
-<!-- MACRO HEADER STICKY -->
-<div class="macro-header">
-  <div class="macro-top-row">
-    <span class="header-title">NUTRIÇÃO</span>
-    <div class="macro-pills">
-      <div class="macro-pill"><span class="mp-val" id="h-kcal">0</span><span class="mp-lbl">kcal</span></div>
-      <div class="macro-pill"><span class="mp-val" id="h-prot" style="color:var(--green)">0</span><span class="mp-lbl">prot</span></div>
-      <div class="macro-pill"><span class="mp-val" id="h-carbo" style="color:var(--blue)">0</span><span class="mp-lbl">carbo</span></div>
-      <div class="macro-pill"><span class="mp-val" id="h-gord" style="color:var(--orange)">0</span><span class="mp-lbl">gord</span></div>
-      <div class="macro-pill"><span class="mp-val" id="h-fibra" style="color:var(--green)">0</span><span class="mp-lbl">fibras</span></div>
+<div class="hdr">
+  <div class="hdr-row">
+    <span class="hdr-title">NUTRIÇÃO</span>
+    <div class="pills">
+      <div class="pill"><span class="pv" id="h-kcal">0</span><span class="pl">kcal</span></div>
+      <div class="pill"><span class="pv" id="h-prot" style="color:var(--gr)">0g</span><span class="pl">prot</span></div>
+      <div class="pill"><span class="pv" id="h-carbo" style="color:var(--bl)">0g</span><span class="pl">carbo</span></div>
+      <div class="pill"><span class="pv" id="h-gord" style="color:var(--or)">0g</span><span class="pl">gord</span></div>
+      <div class="pill"><span class="pv" id="h-fibra" style="color:var(--gr)">0g</span><span class="pl">fibras</span></div>
     </div>
-    <button class="save-btn" id="save-btn" onclick="saveChanges()" title="Salvar alterações">💾</button>
   </div>
 </div>
 
-<!-- PAINEL DE ALERTAS -->
-<div class="alert-panel">
-  <div class="alert-panel-inner" id="alert-panel">
-    <div class="alert-panel-title" id="alert-panel-title">⚠ MICRONUTRIENTES ABAIXO DO RECOMENDADO</div>
-    <div class="alert-groups" id="alert-groups"></div>
-  </div>
-</div>
+<div class="ap"><div class="ai" id="alert-panel">
+  <div class="at" id="alert-title"></div>
+  <div id="alert-body"></div>
+</div></div>
 
 <div class="main">
 
-<!-- CAFÉ DA MANHÃ -->
-<div class="section" id="section-cafe">
-  <div class="section-title" onclick="toggleSection('section-cafe')">
-    ☕ CAFÉ DA MANHÃ
-    <span class="section-kcal" id="cafe-kcal-sub">0 kcal</span>
-    <span class="section-chevron">▼</span>
-  </div>
-  <div class="section-body">
-    <div class="ing-headers">
-      <span class="col-header">Ingrediente</span>
-      <span class="col-header gram-col">Gramas</span>
-      <span class="col-header">Kcal</span>
-      <span class="col-header">Prot</span>
-      <span class="col-header">Carbo</span>
-      <span class="col-header col-gord">Gord</span>
-    </div>
-    <div class="ing-list" id="cafe-list"></div>
-    <button class="add-food-btn" onclick="openModal('cafe')">＋ Adicionar alimento</button>
+<div class="sec" id="s-r1">
+  <div class="sec-hdr" onclick="tog('s-r1')">☕ REFEIÇÃO 1<span class="skcal" id="r1-sub">0 kcal</span><span class="chev">▼</span></div>
+  <div class="sec-body"><div class="ilist" id="r1-list"></div></div>
+</div>
+
+<div class="sec" id="s-r2">
+  <div class="sec-hdr" onclick="tog('s-r2')">🍲 REFEIÇÃO 2<span class="skcal" id="r2-sub">0 kcal</span><span class="chev">▼</span></div>
+  <div class="sec-body"><div class="ilist" id="r2-list"></div></div>
+</div>
+
+<div class="sec" id="s-supl">
+  <div class="sec-hdr" onclick="tog('s-supl')">💊 SUPLEMENTOS &amp; MEDICAÇÃO<span class="chev" style="margin-left:auto">▼</span></div>
+  <div class="sec-body"><div id="supl-list" style="margin-top:6px"></div></div>
+</div>
+
+<div class="sec" id="s-obs">
+  <div class="sec-hdr" onclick="tog('s-obs')">📋 OBSERVAÇÕES<span class="chev" style="margin-left:auto">▼</span></div>
+  <div class="sec-body"><div id="obs-list" style="margin-top:8px"></div></div>
+</div>
+
+<div class="sec" id="s-micro">
+  <div class="sec-hdr" onclick="tog('s-micro')">🧬 MICRONUTRIENTES<span class="chev" style="margin-left:auto">▼</span></div>
+  <div class="sec-body">
+    <div class="warn-bar" style="margin-top:8px">⚠️ Estimativas USDA FoodData Central. Variam conforme preparo e procedência.</div>
+    <div class="mgrid" id="micro-grid"></div>
   </div>
 </div>
 
-<!-- PICADINHO -->
-<div class="section" id="section-pic">
-  <div class="section-title" onclick="toggleSection('section-pic')">
-    🍲 PICADINHO COM BETERRABA
-    <span class="section-kcal" id="pic-kcal-sub">0 kcal</span>
-    <span class="section-chevron">▼</span>
-  </div>
-  <div class="section-body">
-    <div class="ing-headers">
-      <span class="col-header">Ingrediente</span>
-      <span class="col-header gram-col">Gramas</span>
-      <span class="col-header">Kcal</span>
-      <span class="col-header">Prot</span>
-      <span class="col-header">Carbo</span>
-      <span class="col-header col-gord">Gord</span>
-    </div>
-    <div class="ing-list" id="pic-list"></div>
-    <button class="add-food-btn" onclick="openModal('pic')">＋ Adicionar alimento</button>
-  </div>
 </div>
 
-<!-- SUPLEMENTOS -->
-<div class="section" id="section-supl">
-  <div class="section-title" onclick="toggleSection('section-supl')">
-    💊 SUPLEMENTOS
-    <span class="section-chevron" style="margin-left:auto">▼</span>
+<!-- MODAL -->
+<div class="overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <button class="modal-close" onclick="closeModal()">Fechar</button>
   </div>
-  <div class="section-body">
-    <div id="supl-list"></div>
-  </div>
-</div>
-
-<!-- OBSERVAÇÕES -->
-<div class="section" id="section-obs">
-  <div class="section-title" onclick="toggleSection('section-obs')">
-    📋 OBSERVAÇÕES CLÍNICAS
-    <span class="section-chevron" style="margin-left:auto">▼</span>
-  </div>
-  <div class="section-body">
-    <div id="obs-list"></div>
-  </div>
-</div>
-
-<!-- MICRONUTRIENTES -->
-<div class="section" id="section-micro">
-  <div class="section-title" onclick="toggleSection('section-micro')">
-    🧬 MICRONUTRIENTES
-    <span class="section-chevron" style="margin-left:auto">▼</span>
-  </div>
-  <div class="section-body">
-    <div class="alert-bar warn" style="margin-top:8px">
-      ⚠️ Estimativas baseadas em TACO/IBGE e USDA. Variam conforme preparo e procedência.
-    </div>
-    <div class="micro-grid" id="micro-grid"></div>
-  </div>
-</div>
-
-</div><!-- .main -->
-
-<!-- MODAL ADICIONAR ALIMENTO -->
-<div class="modal-overlay" id="food-modal" onclick="handleModalBgClick(event)">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="modal-title">ADICIONAR ALIMENTO</div>
-
-    <!-- BUSCA -->
-    <input class="modal-search" id="modal-search" type="text" placeholder="Buscar alimento... (ex: frango, arroz, aveia)" autocomplete="off">
-    <div class="search-results" id="search-results"></div>
-
-    <div style="padding:8px 0 4px;">
-      <button class="modal-btn secondary" style="width:100%;font-size:13px;padding:10px;" onclick="closeModal()">Cancelar</button>
-    </div>
-  </div>
-</div>
 </div>
 
 <script>
-// ─────────────────────────────────────────────
-// BANCO DE DADOS NUTRICIONAL (por 100g ou 100ml)
-// ─────────────────────────────────────────────
+// ── DATABASE ──────────────────────────────────────────────────────────────
 const DB = {
-  // { kcal, prot, carbo, gord, ...micros por 100g }
-  'leite-po': {
-    name: 'Leite em pó desnatado', unit: 'g',
-    kcal:357, prot:35, carbo:52, gord:0.9,
-    calcio:1250, ferro:0.3, magnesio:110, potassio:1700, zinco:1.5,
-    vitA:0, vitC:4, vitD:0, vitE:0.1, vitK1:0,
-    vitB1:0.28, vitB2:1.05, vitB3:0.9, vitB6:0.35, vitB12:2.0,
-    folato:50, biotina:15, colina:70, selenio:12, iodo:110, fosforo:800, cobre:0.1, manganes:0.03,
-    vitB5:1.6, vitK2:0, sodio:550, cromo:3, molibdenio:60, omega3:0.05, omega6:0.1, vitB7:15, vitB9:50
-  },
-  'ovos': {
-    name: 'Ovos inteiros', unit: 'g',
-    kcal:143, prot:12.5, carbo:0.6, gord:10,
-    calcio:55, ferro:1.7, magnesio:12, potassio:134, zinco:1.1,
-    vitA:90, vitC:0, vitD:40, vitE:1.0, vitK1:0,
-    vitB1:0.06, vitB2:0.3, vitB3:0.06, vitB6:0.07, vitB12:1.0,
-    folato:30, biotina:20, colina:280, selenio:15, iodo:35, fosforo:180, cobre:0.07, manganes:0.03,
-    vitB5:1.4, vitK2:0.4, sodio:140, cromo:0.4, molibdenio:0, omega3:0.1, omega6:1.6, vitB7:20, vitB9:30
-  },
-  'manteiga': {
-    name: 'Manteiga', unit: 'g',
-    kcal:717, prot:0.9, carbo:0.1, gord:81,
-    calcio:24, ferro:0, magnesio:2, potassio:24, zinco:0.1,
-    vitA:684, vitC:0, vitD:0, vitE:2.3, vitK1:7,
-    vitB1:0, vitB2:0.03, vitB3:0, vitB6:0, vitB12:0.2,
-    folato:3, biotina:2, colina:19, selenio:1, iodo:5, fosforo:24, cobre:0, manganes:0,
-    vitB5:0.1, vitK2:2.7, sodio:580, cromo:0, molibdenio:0, omega3:0.3, omega6:0.4, vitB7:2, vitB9:3
-  },
-  'amendoas': {
-    name: 'Amêndoas (sem sal)', unit: 'g',
-    kcal:576, prot:21, carbo:22, gord:49,
-    calcio:264, ferro:3.7, magnesio:270, potassio:733, zinco:3.1,
-    vitA:0, vitC:0, vitD:0, vitE:25.6, vitK1:0,
-    vitB1:0.21, vitB2:0.8, vitB3:3.6, vitB6:0.13, vitB12:0,
-    folato:50, biotina:60, colina:52, selenio:2, iodo:0, fosforo:484, cobre:1.0, manganes:2.5,
-    vitB5:0.47, vitK2:0, sodio:1, cromo:6, molibdenio:0, omega3:0.0, omega6:12.3, vitB7:60, vitB9:50
-  },
-  'castanha': {
-    name: 'Castanha-do-pará', unit: 'g',
-    kcal:656, prot:14, carbo:12, gord:66,
-    calcio:160, ferro:2.4, magnesio:376, potassio:659, zinco:4.1,
-    vitA:0, vitC:0.7, vitD:0, vitE:5.7, vitK1:0,
-    vitB1:0.62, vitB2:0.04, vitB3:0.3, vitB6:0.1, vitB12:0,
-    folato:22, biotina:0, colina:28, selenio:1917, iodo:0, fosforo:725, cobre:1.7, manganes:1.2,
-    vitB5:0.18, vitK2:0, sodio:3, cromo:0, molibdenio:0, omega3:0.02, omega6:20.6, vitB7:0, vitB9:22
-  },
-  'patinho': {
-    name: 'Patinho (cru)', unit: 'g',
-    kcal:120, prot:22, carbo:0, gord:2.9,
-    calcio:5, ferro:2.0, magnesio:13, potassio:330, zinco:3.0,
-    vitA:0, vitC:0, vitD:0, vitE:0.1, vitK1:0,
-    vitB1:0.1, vitB2:0.12, vitB3:6.0, vitB6:0.5, vitB12:1.0,
-    folato:4, biotina:3, colina:40, selenio:9, iodo:3, fosforo:220, cobre:0.12, manganes:0.01,
-    vitB5:0.8, vitK2:0, sodio:65, cromo:2, molibdenio:10, omega3:0.04, omega6:0.3, vitB7:3, vitB9:4
-  },
-  'feijao-branco': {
-    name: 'Feijão-branco (cozido)', unit: 'g',
-    kcal:115, prot:7.3, carbo:20, gord:0.3,
-    calcio:90, ferro:2.1, magnesio:30, potassio:340, zinco:1.0,
-    vitA:0, vitC:0, vitD:0, vitE:0.1, vitK1:0,
-    vitB1:0.2, vitB2:0.06, vitB3:0.5, vitB6:0.1, vitB12:0,
-    folato:38, biotina:0, colina:30, selenio:2, iodo:0, fosforo:120, cobre:0.25, manganes:0.34,
-    vitB5:0.3, vitK2:0, sodio:2, cromo:0, molibdenio:100, omega3:0.2, omega6:0.1, vitB7:0, vitB9:38
-  },
-  'batata-doce': {
-    name: 'Batata-doce (crua)', unit: 'g',
-    kcal:77, prot:1.6, carbo:18, gord:0.1,
-    calcio:30, ferro:0.6, magnesio:25, potassio:337, zinco:0.3,
-    vitA:709, vitC:2.4, vitD:0, vitE:0.3, vitK1:1.8,
-    vitB1:0.08, vitB2:0.06, vitB3:0.6, vitB6:0.3, vitB12:0,
-    folato:11, biotina:0, colina:12, selenio:0.3, iodo:0, fosforo:47, cobre:0.15, manganes:0.26,
-    vitB5:0.8, vitK2:0, sodio:55, cromo:0, molibdenio:0, omega3:0.0, omega6:0.05, vitB7:0, vitB9:11
-  },
-  'beterraba': {
-    name: 'Beterraba (crua)', unit: 'g',
-    kcal:43, prot:1.6, carbo:9.6, gord:0.1,
-    calcio:16, ferro:0.9, magnesio:23, potassio:220, zinco:0.4,
-    vitA:0, vitC:4.9, vitD:0, vitE:0.04, vitK1:0,
-    vitB1:0.03, vitB2:0.04, vitB3:0.3, vitB6:0.07, vitB12:0,
-    folato:68, biotina:0, colina:6, selenio:0.5, iodo:0, fosforo:38, cobre:0.07, manganes:0.15,
-    vitB5:0.15, vitK2:0, sodio:78, cromo:0, molibdenio:0, omega3:0.0, omega6:0.06, vitB7:0, vitB9:68
-  },
-  'brocolis': {
-    name: 'Brócolis', unit: 'g',
-    kcal:34, prot:2.8, carbo:6.6, gord:0.4,
-    calcio:47, ferro:0.7, magnesio:21, potassio:316, zinco:0.4,
-    vitA:7, vitC:89, vitD:0, vitE:0.8, vitK1:102,
-    vitB1:0.07, vitB2:0.12, vitB3:0.6, vitB6:0.18, vitB12:0,
-    folato:71, biotina:0, colina:19, selenio:2.5, iodo:0, fosforo:66, cobre:0.05, manganes:0.2,
-    vitB5:0.57, vitK2:0, sodio:33, cromo:0, molibdenio:0, omega3:0.1, omega6:0.05, vitB7:0, vitB9:71
-  },
-  'cenoura': {
-    name: 'Cenoura', unit: 'g',
-    kcal:41, prot:0.9, carbo:9.6, gord:0.2,
-    calcio:33, ferro:0.3, magnesio:12, potassio:320, zinco:0.2,
-    vitA:835, vitC:5.9, vitD:0, vitE:0.7, vitK1:13,
-    vitB1:0.07, vitB2:0.06, vitB3:1.0, vitB6:0.14, vitB12:0,
-    folato:19, biotina:0, colina:8, selenio:0.1, iodo:0, fosforo:35, cobre:0.05, manganes:0.14,
-    vitB5:0.27, vitK2:0, sodio:69, cromo:0, molibdenio:0, omega3:0.0, omega6:0.1, vitB7:0, vitB9:19
-  },
-  'abobrinha': {
-    name: 'Abobrinha', unit: 'g',
-    kcal:17, prot:1.2, carbo:3.1, gord:0.2,
-    calcio:16, ferro:0.4, magnesio:18, potassio:261, zinco:0.3,
-    vitA:10, vitC:17.9, vitD:0, vitE:0.1, vitK1:4,
-    vitB1:0.05, vitB2:0.09, vitB3:0.5, vitB6:0.24, vitB12:0,
-    folato:24, biotina:0, colina:9, selenio:0.2, iodo:0, fosforo:38, cobre:0.07, manganes:0.18,
-    vitB5:0.2, vitK2:0, sodio:2, cromo:0, molibdenio:0, omega3:0.05, omega6:0.05, vitB7:0, vitB9:24
-  },
-  'espinafre': {
-    name: 'Espinafre', unit: 'g',
-    kcal:23, prot:2.9, carbo:3.6, gord:0.4,
-    calcio:99, ferro:2.7, magnesio:79, potassio:558, zinco:0.5,
-    vitA:469, vitC:28, vitD:0, vitE:2.0, vitK1:483,
-    vitB1:0.08, vitB2:0.19, vitB3:0.7, vitB6:0.19, vitB12:0,
-    folato:194, biotina:0, colina:20, selenio:1.0, iodo:0, fosforo:49, cobre:0.13, manganes:0.9,
-    vitB5:0.07, vitK2:0, sodio:79, cromo:0, molibdenio:0, omega3:0.14, omega6:0.03, vitB7:0, vitB9:194
-  },
-  'tomate': {
-    name: 'Tomate', unit: 'g',
-    kcal:18, prot:0.9, carbo:3.9, gord:0.2,
-    calcio:10, ferro:0.3, magnesio:11, potassio:237, zinco:0.2,
-    vitA:42, vitC:13.7, vitD:0, vitE:0.5, vitK1:7.9,
-    vitB1:0.04, vitB2:0.02, vitB3:0.6, vitB6:0.08, vitB12:0,
-    folato:15, biotina:0, colina:7, selenio:0.3, iodo:0, fosforo:24, cobre:0.06, manganes:0.11,
-    vitB5:0.09, vitK2:0, sodio:5, cromo:0, molibdenio:0, omega3:0.0, omega6:0.08, vitB7:0, vitB9:15
-  },
-  'cebola': {
-    name: 'Cebola', unit: 'g',
-    kcal:40, prot:1.1, carbo:9.3, gord:0.1,
-    calcio:23, ferro:0.2, magnesio:10, potassio:146, zinco:0.2,
-    vitA:0, vitC:7.4, vitD:0, vitE:0.02, vitK1:0.4,
-    vitB1:0.05, vitB2:0.03, vitB3:0.1, vitB6:0.13, vitB12:0,
-    folato:19, biotina:0, colina:7, selenio:0.5, iodo:0, fosforo:29, cobre:0.06, manganes:0.13,
-    vitB5:0.12, vitK2:0, sodio:4, cromo:0, molibdenio:0, omega3:0.0, omega6:0.06, vitB7:0, vitB9:19
-  },
-  'alho': {
-    name: 'Alho', unit: 'g',
-    kcal:149, prot:6.4, carbo:33, gord:0.5,
-    calcio:181, ferro:1.7, magnesio:25, potassio:401, zinco:1.2,
-    vitA:0, vitC:31, vitD:0, vitE:0.08, vitK1:1.7,
-    vitB1:0.2, vitB2:0.11, vitB3:0.7, vitB6:1.24, vitB12:0,
-    folato:3, biotina:0, colina:23, selenio:14, iodo:0, fosforo:153, cobre:0.3, manganes:1.7,
-    vitB5:0.6, vitK2:0, sodio:17, cromo:0, molibdenio:0, omega3:0.0, omega6:0.2, vitB7:0, vitB9:3
-  },
-  'azeite': {
-    name: 'Azeite extra virgem', unit: 'ml',
-    kcal:884, prot:0, carbo:0, gord:100,
-    calcio:1, ferro:0.6, magnesio:0, potassio:1, zinco:0,
-    vitA:0, vitC:0, vitD:0, vitE:14, vitK1:60,
-    vitB1:0, vitB2:0, vitB3:0, vitB6:0, vitB12:0,
-    folato:0, biotina:0, colina:0.3, selenio:0, iodo:0, fosforo:0, cobre:0, manganes:0,
-    vitB5:0, vitK2:0, sodio:2, cromo:0, molibdenio:0, omega3:0.76, omega6:9.76, vitB7:0, vitB9:0
-  }
+'leite-po':{name:'Leite em pó desnatado',unit:'g',kcal:357,prot:35.1,carbo:52.2,gord:0.8,fibra:0,calcio:1257,ferro:0.4,magnesio:110,potassio:1700,zinco:1.5,fosforo:830,vitA:7,vitC:8.6,vitD:0,vitE:0.1,vitK1:0,vitK2:0,vitB1:0.28,vitB2:1.5,vitB3:0.9,vitB5:2.9,vitB6:0.35,vitB7:30,vitB9:50,vitB12:2.0,colina:70,selenio:12,iodo:110,sodio:535,cobre:0.1,manganes:0.03,cromo:3,molibdenio:60,omega3:0.05,omega6:0.1,
+info:'<strong>Por que leite em pó desnatado?</strong> O spray-drying preserva >95% das proteínas — com 35g de proteína/100g supera a maioria dos wheys concentrados. Cálcio de 1.257mg/100g: 40g cobrem 50% da IDR. Rico em vitamina B12 (2µg/100g) e riboflavina (1,5mg/100g). O baixo teor de gordura (0,8%) permite dose generosa sem comprometer déficit calórico.'},
+'ovos':{name:'Ovo de galinha inteiro, cru',unit:'g',kcal:143,prot:12.6,carbo:0.7,gord:9.5,fibra:0,calcio:56,ferro:1.8,magnesio:12,potassio:138,zinco:1.3,fosforo:198,vitA:160,vitC:0,vitD:82,vitE:1.1,vitK1:0.3,vitK2:0.4,vitB1:0.07,vitB2:0.48,vitB3:0.07,vitB5:1.4,vitB6:0.17,vitB7:25,vitB9:47,vitB12:1.1,colina:294,selenio:30,iodo:53,sodio:142,cobre:0.07,manganes:0.03,cromo:0.4,molibdenio:0,omega3:0.22,omega6:1.58,
+info:'<strong>O ovo inteiro é a referência de qualidade proteica.</strong> Escore PDCAAS e DIAAS próximos de 1,0. A gema contém 294mg de colina/100g (53% IDR) — nutriente crítico para memória e função hepática. Única fonte alimentar com vitamina D significativa (82 UI/100g). 4 ovos = 280mg de colina, 328mg de vitamina D, 48mg de selênio. Consumir com gema: é onde estão 90% dos micronutrientes.'},
+'manteiga':{name:'Manteiga sem sal',unit:'g',kcal:717,prot:0.9,carbo:0.1,gord:81.1,fibra:0,calcio:24,ferro:0.02,magnesio:2,potassio:24,zinco:0.09,fosforo:24,vitA:684,vitC:0,vitD:0,vitE:2.3,vitK1:7,vitK2:2.7,vitB1:0,vitB2:0.03,vitB3:0.04,vitB5:0.11,vitB6:0.003,vitB7:2,vitB9:3,vitB12:0.2,colina:18.8,selenio:1,iodo:5,sodio:11,cobre:0,manganes:0,cromo:0,molibdenio:0,omega3:0.32,omega6:0.37,
+info:'<strong>Manteiga vs margarina:</strong> A manteiga contém ácido butírico (C4:0) — ácido graxo de cadeia curta que nutre os colonócitos e tem efeito anti-inflamatório intestinal. Fonte de vitamina K2 (MK-4), que ativa osteocalcina (mineralização óssea) e MGP (previne calcificação arterial). Margarina contém gorduras trans mesmo abaixo do limiar de rotulagem. Rico em vitamina A (684µg/100g — retinol pré-formado, absorção imediata).'},
+'amendoas':{name:'Amêndoas sem casca, sem sal',unit:'g',kcal:579,prot:21.2,carbo:21.7,gord:49.4,fibra:12.5,calcio:264,ferro:3.7,magnesio:270,potassio:733,zinco:3.1,fosforo:484,vitA:0,vitC:0,vitD:0,vitE:25.6,vitK1:0,vitK2:0,vitB1:0.21,vitB2:1.01,vitB3:3.6,vitB5:0.47,vitB6:0.14,vitB7:61,vitB9:50,vitB12:0,colina:52,selenio:2.5,iodo:0,sodio:1,cobre:1.0,manganes:2.5,cromo:6,molibdenio:0,omega3:0.003,omega6:12.3,
+info:'<strong>Maior fonte alimentar de vitamina E:</strong> 25,6mg/100g — 20g cobrem 34% da IDR. Vitamina E (alfa-tocoferol) é o principal antioxidante lipossolúvel que protege membranas celulares da peroxidação lipídica. Magnésio de 270mg/100g: relevante pois o Venvanse aumenta excreção urinária de magnésio. Biotina de 61µg/100g (204% IDR). Fibras prebióticas alimentam Bifidobacterium e Lactobacillus.'},
+'castanha':{name:'Castanha-do-pará, crua',unit:'g',kcal:659,prot:14.3,carbo:11.7,gord:66.4,fibra:7.5,calcio:160,ferro:2.4,magnesio:376,potassio:659,zinco:4.1,fosforo:725,vitA:0,vitC:0.7,vitD:0,vitE:5.7,vitK1:0,vitK2:0,vitB1:0.62,vitB2:0.04,vitB3:0.3,vitB5:0.18,vitB6:0.1,vitB7:0,vitB9:22,vitB12:0,colina:28,selenio:1917,iodo:0,sodio:3,cobre:1.74,manganes:1.2,cromo:0,molibdenio:0,omega3:0.02,omega6:20.6,
+info:'<strong>⚠️ MÁXIMO 1 UNIDADE/DIA.</strong> 5g = ~96µg de selênio (175% IDR). Selênio é cofator da glutationa peroxidase (enzima antioxidante central) e da iodotironina deiodinase (ativação do T3 tireoidiano). Excesso causa selenose: queda de cabelo, unhas quebradiças, toxicidade neurológica. O selenio desta castanha equivale a 35 ovos ou 5kg de frango. Não aumentar para 2 unidades.'},
+'sal-r1':{name:'Sal iodado — R1',unit:'g',kcal:0,prot:0,carbo:0,gord:0,fibra:0,calcio:0,ferro:0,magnesio:0,potassio:9,zinco:0,fosforo:0,vitA:0,vitC:0,vitD:0,vitE:0,vitK1:0,vitK2:0,vitB1:0,vitB2:0,vitB3:0,vitB5:0,vitB6:0,vitB7:0,vitB9:0,vitB12:0,colina:0,selenio:0,iodo:2200,sodio:38758,cobre:0,manganes:0,cromo:0,molibdenio:0,omega3:0,omega6:0,
+info:'<strong>Sal iodado — obrigatório no Brasil (RDC 23/2013).</strong> Iodação: 15–45mg/kg (padrão ANVISA). Estimativa conservadora: 40µg/g. 5g = ~200µg iodo (133% IDR). NÃO substituir por sal rosa do Himalaia, sal marinho não iodado ou fleur de sel — todos carecem de iodo e causam hipotireoidismo subclínico a longo prazo. O sódio (38.758mg/100g) deve ser considerado: 5g de sal = 1.938mg de sódio.'},
+'patinho':{name:'Patinho bovino, cru (~6% gordura)',unit:'g',kcal:148,prot:21.0,carbo:0,gord:6.0,fibra:0,calcio:6,ferro:2.1,magnesio:22,potassio:333,zinco:4.5,fosforo:205,vitA:0,vitC:0,vitD:0.1,vitE:0.15,vitK1:0,vitK2:0,vitB1:0.08,vitB2:0.18,vitB3:5.8,vitB5:0.82,vitB6:0.52,vitB7:3,vitB9:8,vitB12:2.4,colina:67,selenio:18,iodo:8,sodio:55,cobre:0.1,manganes:0.01,cromo:2,molibdenio:10,omega3:0.12,omega6:0.28,
+info:'<strong>Patinho com 6% de gordura: corte semi-gorduroso de custo-benefício superior.</strong> 21g de proteína/100g com gordura moderada — perfil de ácidos graxos mais equilibrado que o extra-magro. Maior fonte de vitamina B12 da dieta (2,4µg/100g = 100% IDR). Zinco heme com biodisponibilidade 3–4× superior ao vegetal. 400g crus: 84g proteína, 8,4mg ferro heme, 9,6µg B12. O ácido linoleico conjugado (CLA) da gordura bovina tem atividade anti-inflamatória documentada.'},
+'feijao-branco':{name:'Feijão-branco, cozido',unit:'g',kcal:114,prot:8.0,carbo:20.1,gord:0.4,fibra:6.3,calcio:90,ferro:2.2,magnesio:52,potassio:454,zinco:1.0,fosforo:143,vitA:0,vitC:0,vitD:0,vitE:0.1,vitK1:3,vitK2:0,vitB1:0.24,vitB2:0.07,vitB3:0.5,vitB5:0.27,vitB6:0.1,vitB7:0,vitB9:146,vitB12:0,colina:44,selenio:2,iodo:0,sodio:2,cobre:0.28,manganes:0.51,cromo:0,molibdenio:100,omega3:0.19,omega6:0.08,
+info:'<strong>Feijão-branco e microbiota:</strong> Rico em amido resistente (especialmente após resfriamento), que chega ao cólon como substrato para bactérias benéficas, produzindo ácido butírico — o mesmo composto da manteiga que nutre colonócitos. 146µg de folato/100g (37% IDR): maior fonte de B9 desta receita. Molibdênio de 100µg/100g (222% IDR): cofator de xantina oxidase e sulfito oxidase. Combinar com vitamina C da receita aumenta absorção do ferro não-heme.'},
+'batata-doce':{name:'Batata-doce, crua',unit:'g',kcal:86,prot:1.6,carbo:20.1,gord:0.1,fibra:3.0,calcio:30,ferro:0.6,magnesio:25,potassio:337,zinco:0.3,fosforo:47,vitA:961,vitC:2.4,vitD:0,vitE:0.3,vitK1:1.8,vitK2:0,vitB1:0.08,vitB2:0.06,vitB3:0.6,vitB5:0.8,vitB6:0.3,vitB7:0,vitB9:11,vitB12:0,colina:12,selenio:0.3,iodo:0,sodio:55,cobre:0.15,manganes:0.26,cromo:0,molibdenio:0,omega3:0.01,omega6:0.01,
+info:'<strong>Batata-doce: maior concentração de beta-caroteno entre os alimentos comuns.</strong> 961µg RAE de vitamina A/100g — 200g cobrem 213% IDR. Beta-caroteno é convertido conforme demanda sem risco de toxicidade (diferente do retinol). IG da batata-doce crua (~44) é muito inferior à cozida (~61) e à batata inglesa (~78) — pesá-la crua é o mais preciso. O azeite da receita aumenta absorção dos carotenoides em 3–4×.'},
+'beterraba':{name:'Beterraba, crua',unit:'g',kcal:43,prot:1.6,carbo:9.6,gord:0.2,fibra:2.8,calcio:16,ferro:0.8,magnesio:23,potassio:325,zinco:0.4,fosforo:40,vitA:0,vitC:4.9,vitD:0,vitE:0.04,vitK1:0,vitK2:0,vitB1:0.03,vitB2:0.04,vitB3:0.33,vitB5:0.16,vitB6:0.07,vitB7:0,vitB9:109,vitB12:0,colina:6,selenio:0.7,iodo:0,sodio:78,cobre:0.07,manganes:0.3,cromo:0,molibdenio:0,omega3:0.01,omega6:0.05,
+info:'<strong>Beterraba e performance:</strong> 250–300mg de nitratos/100g, convertidos em óxido nítrico pela microbiota oral. O NO dilata vasos, reduz custo de oxigênio do exercício e melhora eficiência mitocondrial. Meta-análises mostram melhora de 1–3% em endurance com 400–500g/dia. 200g crus = 218µg de folato (55% IDR). Betalaínas (pigmento vermelho-roxo): antioxidantes e anti-inflamatórios com 2× mais atividade que vitamina C.'},
+'brocolis':{name:'Brócolis, cru',unit:'g',kcal:34,prot:2.8,carbo:6.6,gord:0.4,fibra:2.6,calcio:47,ferro:0.7,magnesio:21,potassio:316,zinco:0.4,fosforo:66,vitA:31,vitC:89.2,vitD:0,vitE:0.8,vitK1:102,vitK2:0,vitB1:0.07,vitB2:0.12,vitB3:0.64,vitB5:0.57,vitB6:0.18,vitB7:0,vitB9:63,vitB12:0,colina:18.7,selenio:2.5,iodo:0,sodio:33,cobre:0.05,manganes:0.21,cromo:0,molibdenio:0,omega3:0.17,omega6:0.04,
+info:'<strong>Brócolis e sulforafano</strong> — fitoquímico mais estudado em prevenção de câncer. Formado quando o brócolis é mastigado cru: glucoraphanin + mirosinase → sulforafano. Ativa NRF2 (detoxificação fase 2 hepática) e inibe NF-κB (inflamação). 200g crus: 178mg vitamina C (198% IDR), 204µg vitamina K1 (170% IDR). Cozimento destrói 40–60% do sulforafano e 30% da vitamina C — incluir cru maximiza benefício.'},
+'cenoura':{name:'Cenoura, crua',unit:'g',kcal:41,prot:0.9,carbo:9.6,gord:0.2,fibra:2.8,calcio:33,ferro:0.3,magnesio:12,potassio:320,zinco:0.2,fosforo:35,vitA:835,vitC:5.9,vitD:0,vitE:0.7,vitK1:13,vitK2:0,vitB1:0.07,vitB2:0.06,vitB3:1.0,vitB5:0.27,vitB6:0.14,vitB7:0,vitB9:19,vitB12:0,colina:8.8,selenio:0.1,iodo:0,sodio:69,cobre:0.05,manganes:0.14,cromo:0,molibdenio:0,omega3:0.01,omega6:0.12,
+info:'<strong>Cenoura: maior fonte de beta-caroteno entre alimentos comuns.</strong> 835µg RAE/100g. Beta-caroteno tem biodisponibilidade 3× maior com gordura (azeite). Também contém alfa-caroteno (com atividade anti-tumoral independente) e luteína (saúde ocular). Pectina (fibra solúvel) reduz LDL e alimenta Faecalibacterium prausnitzii — a bactéria mais anti-inflamatória conhecida do microbioma. 200g = 167mg RE vitamina A (185% IDR).'},
+'abobrinha':{name:'Abobrinha, crua',unit:'g',kcal:17,prot:1.2,carbo:3.1,gord:0.3,fibra:1.0,calcio:16,ferro:0.4,magnesio:18,potassio:261,zinco:0.3,fosforo:38,vitA:10,vitC:17.9,vitD:0,vitE:0.12,vitK1:4.3,vitK2:0,vitB1:0.05,vitB2:0.09,vitB3:0.45,vitB5:0.2,vitB6:0.24,vitB7:0,vitB9:24,vitB12:0,colina:9.5,selenio:0.2,iodo:0,sodio:8,cobre:0.07,manganes:0.18,cromo:0,molibdenio:0,omega3:0.06,omega6:0.09,
+info:'<strong>Abobrinha: leveza com densidade micronutricional.</strong> 17 kcal/100g e 95% água — saciedade por volume sem impacto calórico. Rica em quercetina e kaempferol: flavonoides com atividade anti-inflamatória e neuroprotetora. A casca verde contém 3× mais antioxidantes que a polpa — não descascar. Vitamina B6 de 0,24mg/100g é relevante para síntese de serotonina e dopamina: especialmente importante com uso de Venvanse.'},
+'espinafre':{name:'Espinafre, cru',unit:'g',kcal:23,prot:2.9,carbo:3.6,gord:0.4,fibra:2.2,calcio:99,ferro:2.7,magnesio:79,potassio:558,zinco:0.5,fosforo:49,vitA:469,vitC:28.1,vitD:0,vitE:2.0,vitK1:483,vitK2:0,vitB1:0.08,vitB2:0.19,vitB3:0.72,vitB5:0.07,vitB6:0.19,vitB7:0,vitB9:194,vitB12:0,colina:19.7,selenio:1.0,iodo:0,sodio:79,cobre:0.13,manganes:0.9,cromo:0,molibdenio:0,omega3:0.14,omega6:0.03,
+info:'<strong>Espinafre: 483µg de vitamina K1/100g</strong> — maior concentração entre alimentos comuns. 20g = 97µg (81% IDR). 194µg de folato/100g e 79mg magnésio/100g. Atenção: oxalato inibe absorção de cálcio e ferro não-heme. Combinar com vitamina C do brócolis e gordura do azeite maximiza absorção. O magnésio do espinafre (20g = 15,8mg) complementa o suplemento de magnésio — relevante pois Venvanse aumenta excreção urinária.'},
+'tomate':{name:'Tomate italiano, cru',unit:'g',kcal:18,prot:0.9,carbo:3.9,gord:0.2,fibra:1.2,calcio:10,ferro:0.3,magnesio:11,potassio:237,zinco:0.2,fosforo:24,vitA:42,vitC:13.7,vitD:0,vitE:0.54,vitK1:7.9,vitK2:0,vitB1:0.04,vitB2:0.02,vitB3:0.59,vitB5:0.09,vitB6:0.08,vitB7:0,vitB9:15,vitB12:0,colina:6.7,selenio:0,iodo:0,sodio:5,cobre:0.06,manganes:0.11,cromo:0,molibdenio:0,omega3:0.003,omega6:0.08,
+info:'<strong>Tomate e licopeno:</strong> 3–4mg de licopeno/100g. Meta-análise: consumo regular associado a −21% de risco de câncer de próstata. Biodisponibilidade do licopeno aumenta 3–4× com calor e gordura — o cozimento desta receita com azeite maximiza absorção. Ácido clorogênico melhora sensibilidade à insulina. 200g crus fornecem 27mg de vitamina C (30% IDR) e 400mg de potássio.'},
+'cebola':{name:'Cebola, crua',unit:'g',kcal:40,prot:1.1,carbo:9.3,gord:0.1,fibra:1.7,calcio:23,ferro:0.2,magnesio:10,potassio:146,zinco:0.2,fosforo:29,vitA:0,vitC:7.4,vitD:0,vitE:0.02,vitK1:0.4,vitK2:0,vitB1:0.05,vitB2:0.03,vitB3:0.12,vitB5:0.12,vitB6:0.13,vitB7:0,vitB9:19,vitB12:0,colina:6.9,selenio:0.5,iodo:0,sodio:4,cobre:0.06,manganes:0.13,cromo:0,molibdenio:0,omega3:0.004,omega6:0.07,
+info:'<strong>Cebola: maior fonte de quercetina da dieta brasileira.</strong> 14–56mg/100g concentrados nas camadas externas. Quercetina: anti-histamínico natural, anti-inflamatório, antifúngico. Inibe aldose redutase (complicações do diabetes). FOS (frutooligossacarídeos) são prebióticos potentes para Bifidobacterium. Conservar a película dourada quando possível — maior concentração de compostos ativos. 100g = 7,4mg vitamina C.'},
+'alho':{name:'Alho, cru',unit:'g',kcal:149,prot:6.4,carbo:33.1,gord:0.5,fibra:2.1,calcio:181,ferro:1.7,magnesio:25,potassio:401,zinco:1.2,fosforo:153,vitA:0,vitC:31.2,vitD:0,vitE:0.08,vitK1:1.7,vitK2:0,vitB1:0.2,vitB2:0.11,vitB3:0.7,vitB5:0.6,vitB6:1.24,vitB7:0,vitB9:3,vitB12:0,colina:23.2,selenio:14.2,iodo:0,sodio:17,cobre:0.3,manganes:1.67,cromo:0,molibdenio:0,omega3:0.02,omega6:0.24,
+info:'<strong>Alho e alicina:</strong> Formada quando o alho é esmagado — aliinase converte aliina em alicina. Potente antimicrobiana (comparável à penicilina in vitro), antifúngica, antiparasitária. Meta-análise 2016: 20g/dia reduzem pressão sistólica em 8–9 mmHg. Vitamina B6: 1,24mg/100g — relevante para síntese de dopamina e serotonina. Deixar repousar 10 min após picar antes de adicionar calor para maximizar formação de alicina.'},
+'azeite':{name:'Azeite extra virgem',unit:'ml',kcal:884,prot:0,carbo:0,gord:100,fibra:0,calcio:1,ferro:0.56,magnesio:0,potassio:1,zinco:0,fosforo:0,vitA:0,vitC:0,vitD:0,vitE:14.3,vitK1:60.2,vitK2:0,vitB1:0,vitB2:0,vitB3:0,vitB5:0,vitB6:0,vitB7:0,vitB9:0,vitB12:0,colina:0.3,selenio:0,iodo:0,sodio:2,cobre:0,manganes:0,cromo:0,molibdenio:0,omega3:0.76,omega6:9.76,
+info:'<strong>Azeite extra virgem: 70% ácido oleico (ω-9).</strong> Oleocanthal — polifenol do azeite — inibe COX-1 e COX-2 com mecanismo idêntico ao ibuprofeno sem efeitos gástricos. 15ml ≈ 100mg de oleocanthal. Vitamina E: 14,3mg/100g protege ácidos graxos da oxidação. Vitamina K1: 60µg/100g. Para preservar polifenóis: conservar longe de luz e calor, não ultrapassar 180°C. 15ml cobrem 95% da IDR de vitamina E.'},
+'sal-r2':{name:'Sal iodado — R2',unit:'g',kcal:0,prot:0,carbo:0,gord:0,fibra:0,calcio:0,ferro:0,magnesio:0,potassio:9,zinco:0,fosforo:0,vitA:0,vitC:0,vitD:0,vitE:0,vitK1:0,vitK2:0,vitB1:0,vitB2:0,vitB3:0,vitB5:0,vitB6:0,vitB7:0,vitB9:0,vitB12:0,colina:0,selenio:0,iodo:2200,sodio:38758,cobre:0,manganes:0,cromo:0,molibdenio:0,omega3:0,omega6:0,
+info:'<strong>Sal iodado R2 — 10g.</strong> 10g de sal = ~400µg iodo (267% IDR). Junto com R1 (5g): total ~600µg/dia, dentro do limite seguro de 1.100µg/dia (OMS). Sódio total do dia com 15g de sal ≈ 5.800mg — acima da IDR de 2.300mg. Monitorar pressão arterial. Alternativa: reduzir para 7–8g/dia distribuídos nas duas refeições. NÃO substituir por sal não iodado.'},
 };
 
-
-// ─────────────────────────────────────────────
-// TBCA — Tabela Brasileira de Composição de Alimentos (USP/FoRC)
-// Dados por 100g porção comestível · Versão 7.2 (2023)
-// Fonte: tbca.net.br / TACO UNICAMP 4ª edição
-// ─────────────────────────────────────────────
-const TBCA_DB = {
-  // ── CARNES E AVES ──
-  'tbca-frango-peito-cru': { name:'Frango, peito, sem pele, cru', kcal:119, prot:22.8, carbo:0, gord:2.6, calcio:6, ferro:0.5, magnesio:27, potassio:330, zinco:0.7, vitA:6, vitC:1.2, vitB1:0.09, vitB2:0.11, vitB3:12.5, vitB6:0.85, vitB12:0.3, folato:4, sodio:61, fosforo:210, selenio:16, fibra:0 },
-  'tbca-frango-peito-grelhado': { name:'Frango, peito, grelhado', kcal:163, prot:31.8, carbo:0, gord:3.5, calcio:8, ferro:0.7, magnesio:32, potassio:280, zinco:1.1, vitA:7, vitC:0, vitB1:0.07, vitB2:0.14, vitB3:14.8, vitB6:0.9, vitB12:0.4, folato:3, sodio:74, fosforo:240, selenio:22, fibra:0 },
-  'tbca-frango-coxa-cru': { name:'Frango, coxa, sem pele, cru', kcal:131, prot:19.7, carbo:0, gord:5.4, calcio:9, ferro:0.8, magnesio:22, potassio:292, zinco:1.6, vitA:15, vitC:0, vitB1:0.07, vitB2:0.18, vitB3:6.2, vitB6:0.55, vitB12:0.4, folato:4, sodio:68, fosforo:180, selenio:13, fibra:0 },
-  'tbca-carne-bov-alcatra': { name:'Alcatra, crua', kcal:163, prot:19.4, carbo:0, gord:9.2, calcio:5, ferro:2.0, magnesio:18, potassio:290, zinco:3.8, vitA:0, vitC:0, vitB1:0.06, vitB2:0.17, vitB3:4.8, vitB6:0.36, vitB12:1.5, folato:4, sodio:54, fosforo:175, selenio:10, fibra:0 },
-  'tbca-carne-bov-contrafile': { name:'Contrafilé, cru', kcal:218, prot:17.8, carbo:0, gord:16.0, calcio:5, ferro:1.8, magnesio:16, potassio:270, zinco:3.2, vitA:0, vitC:0, vitB1:0.05, vitB2:0.15, vitB3:4.2, vitB6:0.30, vitB12:1.4, folato:3, sodio:52, fosforo:165, selenio:9, fibra:0 },
-  'tbca-carne-bov-coxao-mole': { name:'Coxão mole, cru', kcal:149, prot:20.3, carbo:0, gord:7.2, calcio:4, ferro:2.1, magnesio:19, potassio:305, zinco:3.5, vitA:0, vitC:0, vitB1:0.07, vitB2:0.18, vitB3:5.1, vitB6:0.38, vitB12:1.6, folato:5, sodio:57, fosforo:182, selenio:11, fibra:0 },
-  'tbca-carne-bov-musculo': { name:'Músculo bovino, cru', kcal:116, prot:19.7, carbo:0, gord:3.6, calcio:8, ferro:2.6, magnesio:24, potassio:328, zinco:4.0, vitA:0, vitC:0, vitB1:0.07, vitB2:0.19, vitB3:4.6, vitB6:0.40, vitB12:1.8, folato:6, sodio:62, fosforo:195, selenio:12, fibra:0 },
-  'tbca-atum-conserva': { name:'Atum, em conserva', kcal:133, prot:26.5, carbo:0, gord:3.0, calcio:17, ferro:1.0, magnesio:30, potassio:250, zinco:0.6, vitA:12, vitC:0, vitB1:0.04, vitB2:0.1, vitB3:10.5, vitB6:0.43, vitB12:3.0, folato:3, sodio:396, fosforo:220, selenio:65, fibra:0 },
-  'tbca-sardinha-conserva': { name:'Sardinha, em conserva', kcal:208, prot:24.6, carbo:0, gord:11.5, calcio:382, ferro:2.9, magnesio:35, potassio:397, zinco:1.3, vitA:25, vitC:0, vitB1:0.04, vitB2:0.18, vitB3:5.2, vitB6:0.22, vitB12:8.9, folato:10, sodio:505, fosforo:490, selenio:52, fibra:0 },
-  'tbca-ovo-cozido': { name:'Ovo de galinha, cozido', kcal:146, prot:13.5, carbo:0.6, gord:9.6, calcio:55, ferro:1.8, magnesio:11, potassio:126, zinco:1.1, vitA:82, vitC:0, vitB1:0.06, vitB2:0.33, vitB3:0.1, vitB6:0.09, vitB12:1.1, folato:23, sodio:118, fosforo:172, selenio:15, fibra:0 },
-  // ── LEGUMINOSAS ──
-  'tbca-feijao-preto-cozido': { name:'Feijão preto, cozido', kcal:77, prot:4.5, carbo:14.0, gord:0.5, calcio:29, ferro:1.5, magnesio:21, potassio:255, zinco:0.6, vitA:0, vitC:0, vitB1:0.1, vitB2:0.04, vitB3:0.5, vitB6:0.07, vitB12:0, folato:27, sodio:2, fosforo:96, selenio:1, fibra:8.4 },
-  'tbca-feijao-carioca-cozido': { name:'Feijão carioca, cozido', kcal:76, prot:4.8, carbo:13.6, gord:0.5, calcio:27, ferro:1.6, magnesio:23, potassio:266, zinco:0.7, vitA:0, vitC:0, vitB1:0.12, vitB2:0.05, vitB3:0.6, vitB6:0.08, vitB12:0, folato:30, sodio:2, fosforo:100, selenio:1, fibra:8.5 },
-  'tbca-lentilha-cozida': { name:'Lentilha, cozida', kcal:93, prot:6.3, carbo:16.3, gord:0.5, calcio:18, ferro:2.4, magnesio:22, potassio:268, zinco:1.0, vitA:0, vitC:1.5, vitB1:0.15, vitB2:0.06, vitB3:1.0, vitB6:0.18, vitB12:0, folato:181, sodio:2, fosforo:113, selenio:3, fibra:7.9 },
-  'tbca-grao-bico-cozido': { name:'Grão-de-bico, cozido', kcal:119, prot:7.1, carbo:21.0, gord:1.5, calcio:47, ferro:1.6, magnesio:30, potassio:253, zinco:1.0, vitA:0, vitC:1.3, vitB1:0.12, vitB2:0.05, vitB3:0.5, vitB6:0.15, vitB12:0, folato:172, sodio:7, fosforo:138, selenio:3, fibra:6.0 },
-  'tbca-ervilha-cozida': { name:'Ervilha, cozida', kcal:67, prot:5.4, carbo:9.1, gord:0.4, calcio:14, ferro:1.2, magnesio:18, potassio:180, zinco:0.8, vitA:38, vitC:9.0, vitB1:0.19, vitB2:0.07, vitB3:1.5, vitB6:0.14, vitB12:0, folato:42, sodio:2, fosforo:99, selenio:2, fibra:5.5 },
-  'tbca-soja-cozida': { name:'Soja, cozida', kcal:141, prot:12.9, carbo:11.9, gord:5.2, calcio:88, ferro:2.6, magnesio:60, potassio:515, zinco:1.0, vitA:0, vitC:1.7, vitB1:0.16, vitB2:0.14, vitB3:0.4, vitB6:0.23, vitB12:0, folato:54, sodio:1, fosforo:179, selenio:7, fibra:6.4 },
-  // ── CEREAIS E GRÃOS ──
-  'tbca-arroz-branco-cozido': { name:'Arroz polido, cozido', kcal:128, prot:2.5, carbo:28.1, gord:0.2, calcio:4, ferro:0.1, magnesio:8, potassio:26, zinco:0.3, vitA:0, vitC:0, vitB1:0.02, vitB2:0.01, vitB3:0.4, vitB6:0.06, vitB12:0, folato:4, sodio:1, fosforo:40, selenio:6, fibra:1.6 },
-  'tbca-arroz-integral-cozido': { name:'Arroz integral, cozido', kcal:124, prot:2.6, carbo:25.8, gord:1.0, calcio:5, ferro:0.3, magnesio:30, potassio:68, zinco:0.6, vitA:0, vitC:0, vitB1:0.08, vitB2:0.02, vitB3:1.3, vitB6:0.15, vitB12:0, folato:6, sodio:1, fosforo:78, selenio:9, fibra:2.7 },
-  'tbca-aveia-flocos': { name:'Aveia, flocos', kcal:394, prot:13.9, carbo:66.6, gord:8.5, calcio:54, ferro:4.2, magnesio:119, potassio:355, zinco:3.2, vitA:0, vitC:0, vitB1:0.54, vitB2:0.12, vitB3:1.1, vitB6:0.1, vitB12:0, folato:56, sodio:2, fosforo:400, selenio:34, fibra:9.1 },
-  'tbca-macarrao-cozido': { name:'Macarrão, cozido', kcal:112, prot:3.7, carbo:23.4, gord:0.5, calcio:6, ferro:1.1, magnesio:10, potassio:29, zinco:0.4, vitA:0, vitC:0, vitB1:0.04, vitB2:0.03, vitB3:0.9, vitB6:0.04, vitB12:0, folato:7, sodio:2, fosforo:44, selenio:22, fibra:1.8 },
-  'tbca-paes-frances': { name:'Pão francês', kcal:300, prot:8.0, carbo:58.6, gord:3.1, calcio:21, ferro:1.4, magnesio:21, potassio:97, zinco:0.6, vitA:0, vitC:0, vitB1:0.13, vitB2:0.07, vitB3:2.1, vitB6:0.06, vitB12:0, folato:28, sodio:604, fosforo:73, selenio:26, fibra:2.3 },
-  'tbca-farinha-mandioca': { name:'Farinha de mandioca, crua', kcal:361, prot:1.5, carbo:87.9, gord:0.3, calcio:39, ferro:1.4, magnesio:38, potassio:340, zinco:0.4, vitA:0, vitC:0, vitB1:0.05, vitB2:0.03, vitB3:0.9, vitB6:0.1, vitB12:0, folato:5, sodio:3, fosforo:37, selenio:2, fibra:6.5 },
-  'tbca-tapioca-cozida': { name:'Tapioca, cozida', kcal:95, prot:0.2, carbo:23.5, gord:0.1, calcio:5, ferro:0.1, magnesio:2, potassio:7, zinco:0, vitA:0, vitC:0, vitB1:0, vitB2:0, vitB3:0, vitB6:0, vitB12:0, folato:0, sodio:1, fosforo:5, selenio:0, fibra:0.1 },
-  'tbca-quinoa-cozida': { name:'Quinoa, cozida', kcal:120, prot:4.4, carbo:21.3, gord:1.9, calcio:17, ferro:1.5, magnesio:64, potassio:172, zinco:1.1, vitA:0, vitC:0, vitB1:0.1, vitB2:0.11, vitB3:0.4, vitB6:0.12, vitB12:0, folato:42, sodio:7, fosforo:152, selenio:3, fibra:2.8 },
-  // ── LATICÍNIOS ──
-  'tbca-leite-integral': { name:'Leite de vaca, integral', kcal:61, prot:3.2, carbo:4.5, gord:3.3, calcio:113, ferro:0.1, magnesio:10, potassio:138, zinco:0.4, vitA:31, vitC:1.0, vitB1:0.04, vitB2:0.18, vitB3:0.1, vitB6:0.04, vitB12:0.4, folato:5, sodio:40, fosforo:93, selenio:4, fibra:0 },
-  'tbca-leite-desnatado': { name:'Leite de vaca, desnatado', kcal:35, prot:3.5, carbo:5.0, gord:0.1, calcio:123, ferro:0.1, magnesio:11, potassio:152, zinco:0.4, vitA:0, vitC:1.2, vitB1:0.04, vitB2:0.2, vitB3:0.1, vitB6:0.04, vitB12:0.4, folato:5, sodio:44, fosforo:100, selenio:4, fibra:0 },
-  'tbca-iogurte-natural': { name:'Iogurte natural, integral', kcal:66, prot:3.5, carbo:4.9, gord:3.3, calcio:121, ferro:0.1, magnesio:12, potassio:155, zinco:0.6, vitA:31, vitC:1.0, vitB1:0.03, vitB2:0.19, vitB3:0.1, vitB6:0.06, vitB12:0.5, folato:7, sodio:46, fosforo:94, selenio:3, fibra:0 },
-  'tbca-queijo-minas-frescal': { name:'Queijo minas frescal', kcal:264, prot:17.4, carbo:2.8, gord:20.2, calcio:579, ferro:0.3, magnesio:17, potassio:102, zinco:1.9, vitA:170, vitC:0, vitB1:0.02, vitB2:0.42, vitB3:0.1, vitB6:0.05, vitB12:1.2, folato:12, sodio:408, fosforo:354, selenio:8, fibra:0 },
-  'tbca-queijo-cottage': { name:'Queijo cottage', kcal:98, prot:12.4, carbo:3.4, gord:4.0, calcio:60, ferro:0.1, magnesio:8, potassio:84, zinco:0.4, vitA:41, vitC:0, vitB1:0.02, vitB2:0.15, vitB3:0.1, vitB6:0.07, vitB12:0.4, folato:12, sodio:406, fosforo:132, selenio:9, fibra:0 },
-  'tbca-coalhada': { name:'Coalhada', kcal:73, prot:4.3, carbo:5.8, gord:3.5, calcio:130, ferro:0.1, magnesio:13, potassio:165, zinco:0.6, vitA:35, vitC:1.0, vitB1:0.03, vitB2:0.2, vitB3:0.1, vitB6:0.06, vitB12:0.5, folato:8, sodio:50, fosforo:102, selenio:3, fibra:0 },
-  // ── FRUTAS ──
-  'tbca-banana-prata': { name:'Banana prata, crua', kcal:92, prot:1.3, carbo:23.8, gord:0.1, calcio:3, ferro:0.3, magnesio:27, potassio:422, zinco:0.2, vitA:8, vitC:5.9, vitB1:0.04, vitB2:0.05, vitB3:0.6, vitB6:0.36, vitB12:0, folato:20, sodio:1, fosforo:26, selenio:1, fibra:1.9 },
-  'tbca-banana-maçã': { name:'Banana maçã, crua', kcal:87, prot:1.2, carbo:22.3, gord:0.2, calcio:6, ferro:0.4, magnesio:29, potassio:376, zinco:0.2, vitA:4, vitC:6.0, vitB1:0.05, vitB2:0.05, vitB3:0.7, vitB6:0.34, vitB12:0, folato:18, sodio:1, fosforo:22, selenio:1, fibra:2.2 },
-  'tbca-laranja-pera': { name:'Laranja pera, crua', kcal:37, prot:1.0, carbo:8.9, gord:0.1, calcio:22, ferro:0.4, magnesio:11, potassio:169, zinco:0.1, vitA:4, vitC:53.0, vitB1:0.09, vitB2:0.04, vitB3:0.3, vitB6:0.07, vitB12:0, folato:26, sodio:0, fosforo:18, selenio:1, fibra:1.0 },
-  'tbca-mamao-formosa': { name:'Mamão formosa, cru', kcal:40, prot:0.5, carbo:10.4, gord:0.1, calcio:21, ferro:0.2, magnesio:10, potassio:257, zinco:0.1, vitA:151, vitC:61.8, vitB1:0.05, vitB2:0.05, vitB3:0.4, vitB6:0.08, vitB12:0, folato:38, sodio:5, fosforo:9, selenio:1, fibra:1.8 },
-  'tbca-manga-tommy': { name:'Manga tommy, crua', kcal:64, prot:0.4, carbo:17.0, gord:0.3, calcio:7, ferro:0.2, magnesio:9, potassio:138, zinco:0.1, vitA:38, vitC:36.4, vitB1:0.06, vitB2:0.05, vitB3:0.6, vitB6:0.13, vitB12:0, folato:14, sodio:4, fosforo:11, selenio:1, fibra:1.8 },
-  'tbca-abacaxi': { name:'Abacaxi, cru', kcal:48, prot:0.9, carbo:12.3, gord:0.1, calcio:13, ferro:0.1, magnesio:11, potassio:138, zinco:0.1, vitA:3, vitC:21.0, vitB1:0.07, vitB2:0.03, vitB3:0.5, vitB6:0.11, vitB12:0, folato:11, sodio:0, fosforo:7, selenio:1, fibra:1.0 },
-  'tbca-maca': { name:'Maçã fuji, crua', kcal:56, prot:0.3, carbo:15.2, gord:0.1, calcio:4, ferro:0.1, magnesio:5, potassio:101, zinco:0.1, vitA:3, vitC:5.7, vitB1:0.02, vitB2:0.01, vitB3:0.1, vitB6:0.04, vitB12:0, folato:3, sodio:0, fosforo:9, selenio:0, fibra:2.0 },
-  'tbca-morango': { name:'Morango, cru', kcal:34, prot:0.7, carbo:7.7, gord:0.3, calcio:14, ferro:0.3, magnesio:12, potassio:153, zinco:0.1, vitA:1, vitC:58.8, vitB1:0.02, vitB2:0.03, vitB3:0.4, vitB6:0.06, vitB12:0, folato:24, sodio:1, fosforo:25, selenio:1, fibra:2.0 },
-  'tbca-uva-itália': { name:'Uva Itália, crua', kcal:61, prot:0.6, carbo:16.2, gord:0.1, calcio:4, ferro:0.1, magnesio:4, potassio:159, zinco:0.1, vitA:3, vitC:5.4, vitB1:0.06, vitB2:0.03, vitB3:0.3, vitB6:0.08, vitB12:0, folato:4, sodio:1, fosforo:16, selenio:0, fibra:0.9 },
-  'tbca-abacate': { name:'Abacate, cru', kcal:96, prot:1.2, carbo:6.0, gord:8.4, calcio:8, ferro:0.4, magnesio:21, potassio:290, zinco:0.4, vitA:7, vitC:10.0, vitB1:0.05, vitB2:0.07, vitB3:1.1, vitB6:0.26, vitB12:0, folato:62, sodio:2, fosforo:37, selenio:0, fibra:3.0 },
-  'tbca-coco-seco': { name:'Coco seco, cru', kcal:299, prot:2.9, carbo:7.3, gord:29.2, calcio:11, ferro:1.7, magnesio:32, potassio:264, zinco:0.9, vitA:0, vitC:2.8, vitB1:0.06, vitB2:0.02, vitB3:0.4, vitB6:0.05, vitB12:0, folato:26, sodio:9, fosforo:95, selenio:10, fibra:9.0 },
-  'tbca-acai-polpa': { name:'Açaí, polpa, congelada', kcal:58, prot:1.5, carbo:6.0, gord:4.5, calcio:31, ferro:3.9, magnesio:20, potassio:130, zinco:0.5, vitA:53, vitC:9.0, vitB1:0.02, vitB2:0.03, vitB3:0.5, vitB6:0.05, vitB12:0, folato:4, sodio:4, fosforo:38, selenio:1, fibra:2.6 },
-  // ── VERDURAS E LEGUMES ──
-  'tbca-alface-crespa': { name:'Alface crespa, crua', kcal:11, prot:1.3, carbo:1.7, gord:0.2, calcio:36, ferro:0.4, magnesio:9, potassio:210, zinco:0.2, vitA:146, vitC:18.0, vitB1:0.06, vitB2:0.08, vitB3:0.4, vitB6:0.07, vitB12:0, folato:136, sodio:10, fosforo:27, selenio:1, fibra:1.7 },
-  'tbca-couve-folha': { name:'Couve manteiga, crua', kcal:25, prot:3.1, carbo:3.0, gord:0.3, calcio:163, ferro:1.0, magnesio:25, potassio:261, zinco:0.4, vitA:333, vitC:120.0, vitB1:0.06, vitB2:0.17, vitB3:1.0, vitB6:0.27, vitB12:0, folato:60, sodio:9, fosforo:71, selenio:1, fibra:2.0 },
-  'tbca-repolho-cru': { name:'Repolho, cru', kcal:15, prot:1.4, carbo:2.0, gord:0.1, calcio:39, ferro:0.3, magnesio:10, potassio:246, zinco:0.1, vitA:1, vitC:44.3, vitB1:0.05, vitB2:0.04, vitB3:0.4, vitB6:0.1, vitB12:0, folato:43, sodio:8, fosforo:27, selenio:0, fibra:1.0 },
-  'tbca-quiabo': { name:'Quiabo, cru', kcal:25, prot:2.1, carbo:4.6, gord:0.2, calcio:81, ferro:0.6, magnesio:36, potassio:252, zinco:0.4, vitA:20, vitC:26.0, vitB1:0.2, vitB2:0.06, vitB3:1.0, vitB6:0.22, vitB12:0, folato:60, sodio:6, fosforo:63, selenio:1, fibra:3.2 },
-  'tbca-abobora-moranga': { name:'Abóbora moranga, crua', kcal:26, prot:1.0, carbo:6.1, gord:0.1, calcio:16, ferro:0.6, magnesio:9, potassio:190, zinco:0.2, vitA:226, vitC:11.0, vitB1:0.03, vitB2:0.11, vitB3:0.6, vitB6:0.06, vitB12:0, folato:16, sodio:1, fosforo:35, selenio:0, fibra:1.4 },
-  'tbca-chuchu': { name:'Chuchu, cru', kcal:16, prot:0.5, carbo:3.8, gord:0.1, calcio:13, ferro:0.3, magnesio:13, potassio:125, zinco:0.1, vitA:0, vitC:8.7, vitB1:0.02, vitB2:0.03, vitB3:0.5, vitB6:0.1, vitB12:0, folato:93, sodio:1, fosforo:18, selenio:0, fibra:1.4 },
-  'tbca-mandioca-cozida': { name:'Mandioca, cozida', kcal:125, prot:0.6, carbo:30.1, gord:0.3, calcio:18, ferro:0.5, magnesio:21, potassio:271, zinco:0.2, vitA:0, vitC:12.4, vitB1:0.05, vitB2:0.03, vitB3:0.5, vitB6:0.07, vitB12:0, folato:27, sodio:1, fosforo:26, selenio:1, fibra:1.9 },
-  'tbca-inhame-cozido': { name:'Inhame, cozido', kcal:116, prot:1.5, carbo:27.5, gord:0.1, calcio:14, ferro:0.5, magnesio:18, potassio:670, zinco:0.2, vitA:4, vitC:12.0, vitB1:0.07, vitB2:0.03, vitB3:0.5, vitB6:0.29, vitB12:0, folato:23, sodio:9, fosforo:37, selenio:1, fibra:4.1 },
-  'tbca-beterraba-cozida': { name:'Beterraba, cozida', kcal:31, prot:1.4, carbo:5.3, gord:0.1, calcio:13, ferro:0.7, magnesio:22, potassio:268, zinco:0.4, vitA:0, vitC:5.4, vitB1:0.03, vitB2:0.04, vitB3:0.4, vitB6:0.07, vitB12:0, folato:71, sodio:60, fosforo:34, selenio:1, fibra:2.9 },
-  'tbca-tomate-caqui': { name:'Tomate, caqui, cru', kcal:15, prot:0.9, carbo:3.1, gord:0.2, calcio:6, ferro:0.3, magnesio:10, potassio:222, zinco:0.2, vitA:60, vitC:27.0, vitB1:0.06, vitB2:0.04, vitB3:0.6, vitB6:0.1, vitB12:0, folato:11, sodio:3, fosforo:27, selenio:0, fibra:1.2 },
-  // ── ÓLEOS E GORDURAS ──
-  'tbca-oleo-soja': { name:'Óleo de soja', kcal:884, prot:0, carbo:0, gord:100, calcio:0, ferro:0, magnesio:0, potassio:0, zinco:0, vitA:0, vitC:0, vitB1:0, vitB2:0, vitB3:0, vitB6:0, vitB12:0, folato:0, sodio:0, fosforo:0, selenio:0, fibra:0 },
-  'tbca-oleo-coco': { name:'Óleo de coco', kcal:892, prot:0, carbo:0, gord:100, calcio:0, ferro:0, magnesio:0, potassio:0, zinco:0, vitA:0, vitC:0, vitB1:0, vitB2:0, vitB3:0, vitB6:0, vitB12:0, folato:0, sodio:0, fosforo:0, selenio:0, fibra:0 },
-  'tbca-margarina': { name:'Margarina, com sal', kcal:724, prot:0.5, carbo:0.9, gord:80.3, calcio:24, ferro:0.1, magnesio:1, potassio:27, zinco:0, vitA:450, vitC:0, vitB1:0, vitB2:0, vitB3:0, vitB6:0, vitB12:0, folato:0, sodio:587, fosforo:18, selenio:0, fibra:0 },
-  // ── SUPLEMENTOS / PROTEÍNAS ──
-  'tbca-whey-concentrado': { name:'Whey protein concentrado', kcal:385, prot:80.0, carbo:8.0, gord:6.0, calcio:400, ferro:1.0, magnesio:80, potassio:600, zinco:2.0, vitA:0, vitC:0, vitB1:0.1, vitB2:0.5, vitB3:1.0, vitB6:0.2, vitB12:1.5, folato:10, sodio:150, fosforo:500, selenio:15, fibra:0 },
-  'tbca-albumina': { name:'Albumina (clara de ovo em pó)', kcal:377, prot:83.0, carbo:5.7, gord:0.5, calcio:50, ferro:0.5, magnesio:30, potassio:700, zinco:0.5, vitA:0, vitC:0, vitB1:0.05, vitB2:1.5, vitB3:0.4, vitB6:0.1, vitB12:0.5, folato:20, sodio:540, fosforo:180, selenio:40, fibra:0 },
-  // ── NOZES E SEMENTES ──
-  'tbca-amendoim-torrado': { name:'Amendoim torrado, sem sal', kcal:602, prot:26.2, carbo:19.0, gord:49.2, calcio:50, ferro:2.3, magnesio:170, potassio:620, zinco:2.5, vitA:0, vitC:0, vitB1:0.49, vitB2:0.13, vitB3:15.5, vitB6:0.35, vitB12:0, folato:145, sodio:2, fosforo:376, selenio:3, fibra:6.5 },
-  'tbca-nozes': { name:'Nozes, cruas', kcal:660, prot:15.2, carbo:13.7, gord:63.5, calcio:94, ferro:2.6, magnesio:158, potassio:441, zinco:3.1, vitA:1, vitC:1.3, vitB1:0.34, vitB2:0.15, vitB3:1.1, vitB6:0.54, vitB12:0, folato:98, sodio:2, fosforo:346, selenio:5, fibra:6.7 },
-  'tbca-chia': { name:'Semente de chia', kcal:490, prot:15.6, carbo:42.1, gord:30.8, calcio:631, ferro:7.7, magnesio:335, potassio:407, zinco:4.6, vitA:54, vitC:1.6, vitB1:0.62, vitB2:0.17, vitB3:8.8, vitB6:0.95, vitB12:0, folato:49, sodio:16, fosforo:860, selenio:55, fibra:34.4 },
-  'tbca-linhaca': { name:'Semente de linhaça', kcal:534, prot:18.3, carbo:28.9, gord:42.2, calcio:255, ferro:5.7, magnesio:392, potassio:813, zinco:4.3, vitA:0, vitC:0.6, vitB1:1.64, vitB2:0.16, vitB3:3.1, vitB6:0.47, vitB12:0, folato:87, sodio:30, fosforo:642, selenio:25, fibra:27.3 },
-  'tbca-gergelim': { name:'Gergelim, sem casca', kcal:598, prot:20.4, carbo:23.4, gord:49.7, calcio:131, ferro:14.5, magnesio:351, potassio:468, zinco:7.8, vitA:0, vitC:0, vitB1:0.79, vitB2:0.25, vitB3:4.5, vitB6:0.79, vitB12:0, folato:97, sodio:11, fosforo:629, selenio:34, fibra:11.8 },
-  'tbca-girassol-semente': { name:'Semente de girassol', kcal:601, prot:20.8, carbo:20.0, gord:52.2, calcio:78, ferro:5.3, magnesio:325, potassio:645, zinco:5.0, vitA:1, vitC:1.4, vitB1:1.48, vitB2:0.36, vitB3:4.1, vitB6:1.35, vitB12:0, folato:227, sodio:3, fosforo:660, selenio:53, fibra:8.6 },
-  // ── BEBIDAS ──
-  'tbca-cafe-solúvel': { name:'Café solúvel, infusão', kcal:2, prot:0.2, carbo:0.3, gord:0, calcio:2, ferro:0, magnesio:6, potassio:66, zinco:0, vitA:0, vitC:0, vitB1:0, vitB2:0.02, vitB3:0.5, vitB6:0, vitB12:0, folato:0, sodio:0, fosforo:2, selenio:0, fibra:0 },
-  'tbca-cafe-coado': { name:'Café coado, infusão', kcal:5, prot:0.3, carbo:0.6, gord:0, calcio:4, ferro:0.1, magnesio:8, potassio:88, zinco:0.1, vitA:0, vitC:0, vitB1:0, vitB2:0.01, vitB3:0.6, vitB6:0.01, vitB12:0, folato:2, sodio:1, fosforo:3, selenio:0, fibra:0 },
-  'tbca-cha-verde': { name:'Chá verde, infusão', kcal:1, prot:0.2, carbo:0.2, gord:0, calcio:2, ferro:0.2, magnesio:2, potassio:18, zinco:0, vitA:0, vitC:1.0, vitB1:0, vitB2:0, vitB3:0, vitB6:0, vitB12:0, folato:0, sodio:0, fosforo:1, selenio:0, fibra:0 },
-  // ── PRATOS TIPICOS BRASILEIROS ──
-  'tbca-feijao-tropeiro': { name:'Feijão tropeiro', kcal:152, prot:8.2, carbo:17.1, gord:5.9, calcio:45, ferro:2.2, magnesio:28, potassio:310, zinco:1.2, vitA:4, vitC:2.0, vitB1:0.18, vitB2:0.1, vitB3:1.5, vitB6:0.15, vitB12:0.2, folato:38, sodio:280, fosforo:120, selenio:5, fibra:5.2 },
-  'tbca-caldo-cana': { name:'Caldo de cana', kcal:56, prot:0.2, carbo:13.9, gord:0.1, calcio:10, ferro:0.2, magnesio:4, potassio:100, zinco:0.1, vitA:0, vitC:2.0, vitB1:0.01, vitB2:0.01, vitB3:0.1, vitB6:0.01, vitB12:0, folato:1, sodio:1, fosforo:8, selenio:0, fibra:0 },
-};
-
-// Integrar TBCA ao DB principal
-Object.assign(DB, TBCA_DB);
-
-
-// ─────────────────────────────────────────────
-// CONFIGURAÇÃO INICIAL DOS INGREDIENTES
-// ─────────────────────────────────────────────
-const CAFE = [
-  { id: 'leite-po', grams: 70 },
-  { id: 'ovos', grams: 200 },
-  { id: 'manteiga', grams: 10 },
-  { id: 'amendoas', grams: 30 },
-  { id: 'castanha', grams: 5 }
+// ── RECEITAS ──────────────────────────────────────────────────────────────
+const R1 = [
+  {id:'leite-po',grams:40},{id:'ovos',grams:200},{id:'manteiga',grams:10},
+  {id:'amendoas',grams:20},{id:'castanha',grams:5},{id:'sal-r1',grams:5},
+];
+const R2 = [
+  {id:'patinho',grams:400},{id:'feijao-branco',grams:150},{id:'batata-doce',grams:200},
+  {id:'beterraba',grams:200},{id:'brocolis',grams:200},{id:'cenoura',grams:200},
+  {id:'abobrinha',grams:200},{id:'espinafre',grams:20},{id:'tomate',grams:200},
+  {id:'cebola',grams:100},{id:'alho',grams:20},{id:'azeite',grams:15},{id:'sal-r2',grams:10},
 ];
 
-const PICADINHO = [
-  { id: 'patinho', grams: 400 },
-  { id: 'feijao-branco', grams: 150 },
-  { id: 'batata-doce', grams: 150 },
-  { id: 'beterraba', grams: 400 },
-  { id: 'brocolis', grams: 150 },
-  { id: 'cenoura', grams: 150 },
-  { id: 'abobrinha', grams: 100 },
-  { id: 'espinafre', grams: 30 },
-  { id: 'tomate', grams: 200 },
-  { id: 'cebola', grams: 100 },
-  { id: 'alho', grams: 20 },
-  { id: 'azeite', grams: 15 }
-];
-
-// SUPLEMENTOS (fixos)
+// ── SUPLEMENTOS & MEDICAÇÃO ───────────────────────────────────────────────
 const SUPLS = [
-  { name: 'Creatina monohidratada', dose: '10g · no café', color: 'var(--accent)' },
-  { name: 'Ômega-3 EPA+DHA (TG)', dose: '2g/dia · 1g café + 1g refeição', color: 'var(--blue)' },
-  { name: 'Vitamina D3', dose: '7.000 UI · café', color: 'var(--orange)' },
-  { name: 'K2-MK7 All-Trans', dose: '150ug · café', color: 'var(--purple)' },
-  { name: 'Magnésio Tri Complex', dose: '300mg · 1 cap manhã + 1 cap noite', color: 'var(--green)' }
+  {name:'Creatina monohidratada',dose:'10g · R1',color:'var(--ac)',
+   info:'<strong>10g/dia — protocolo Dra. Rhonda Patrick.</strong> Acima de 5g/dia parte atravessa a barreira hematoencefálica — benefício cognitivo documentado (melhora de memória e cognição, especialmente em privação de sono). Pode dissolver no café quente sem degradação (creatina é estável até ~100°C). Em dias de privação de sono: aumentar para 20g. Sem necessidade de fase de carga. A creatina também acelera regeneração muscular pós-treino ao aumentar reservas de fosfocreatina.'},
+  {name:'Ômega-3 EPA+DHA TG',dose:'2g/dia · 1g R1 + 1g R2',color:'var(--bl)',
+   info:'<strong>Essential Nutrition Super Omega-3 — forma triglicerídeo (TG).</strong> Absorção 30% superior ao éster etílico (EE), que é a forma mais barata do mercado. Certificação IFOS 5 estrelas garante ausência de metais pesados e mercúrio. 2g EPA+DHA/dia é a dose terapêutica para redução de triglicerídeos (−15 a −30%) e inflamação. Dividir entre R1 e R2 melhora absorção. Exame de índice ômega-3 agendado 04/05/2026 — meta >8% nas hemácias.'},
+  {name:'Vitamina D3',dose:'7.000 UI · R1',color:'var(--or)',
+   info:'<strong>⚠️ EXAME URGENTE.</strong> Nível base: 11,5 ng/mL (out/2025) — insuficiência severa. Suplementando 7.000 UI/dia há +5 meses. Refazer 25(OH)D imediatamente. Meta: 40–60 ng/mL. D3 ativa mais de 200 genes via receptor VDR. Essencial para imunidade inata, síntese de testosterona, função neuromuscular e absorção de cálcio. Tomar com refeição que contenha gordura (R1 tem manteiga e amendoas). A K2-MK7 é co-obrigatória para direcionar o cálcio aos ossos.'},
+  {name:'K2-MK7 All-Trans',dose:'150µg · R1',color:'var(--pu)',
+   info:'<strong>Usar SOMENTE forma All-Trans MK-7.</strong> Marcas confiáveis: Bigens (M.Labs) ou Lauton Clinical. Forma cis é biologicamente inativa. MK-7 tem meia-vida de 72h (vs 6h da MK-4) — atividade contínua com dose única diária. Ativa osteocalcina (mineralização óssea) e MGP (Matrix Gla Protein: previne calcificação arterial). É co-obrigatória com D3 em doses altas: D3 aumenta absorção de cálcio, K2 direciona esse cálcio para os ossos em vez das artérias.'},
+  {name:'Magnésio Tri Complex',dose:'300mg · 1 cap R1 + 1 cap noite',color:'var(--gr)',
+   info:'<strong>Sanavita Tri Complex: dimalato + bisglicinato + taurato na mesma cápsula.</strong> 1 cap manhã (forma dimalato suporta ciclo de Krebs, energia) + 1 cap noite (bisglicinato atravessa barreira hematoencefálica, reduz excitabilidade neuronal, melhora sono). Venvanse aumenta excreção urinária de magnésio — suplementação dupla é especialmente indicada. Magnésio é cofator de 300+ reações enzimáticas incluindo síntese de ATP e replicação de DNA.'},
+  {name:'Venvanse (Lisdexanfetamina)',dose:'40mg · manhã · uso controlado',color:'var(--rd)',
+   info:'<strong>Lisdexanfetamina — pró-fármaco convertido em d-anfetamina.</strong> Meia-vida de 10–14h, efeito mais suave e prolongado que anfetamina direta. Mecanismo: aumenta liberação e bloqueia recaptação de dopamina e noradrenalina no córtex pré-frontal. Interações nutricionais importantes: (1) Vitamina C em altas doses reduz absorção — não tomar vitamina C suplementar próximo ao horário; (2) aumenta excreção de magnésio — suplementar; (3) reduz apetite — garantir ingestão proteica adequada mesmo sem fome.'},
+  {name:'Minoxidil oral',dose:'2,5mg/dia · horário fixo',color:'var(--mu)',
+   info:'<strong>Minoxidil oral 2,5mg — vasodilatador periférico com efeito anti-alopecia.</strong> Mecanismo: abre canais de potássio ATP-dependentes, prolonga fase anagen do ciclo capilar. Dose oral é 10–45× mais potente que tópica em estudos de comparação. Efeitos colaterais possíveis: retenção de líquido, hipertricose (crescimento de pelos em outras áreas). Monitorar pressão arterial — vasodilatação sistêmica. Tomar em horário fixo, preferencialmente com alimento.'},
+  {name:'Avodart (Dutasterida)',dose:'0,5mg/dia · horário fixo',color:'var(--mu)',
+   info:'<strong>Dutasterida 0,5mg — inibidor dual de 5-alfa-redutase (tipos 1 e 2).</strong> Bloqueia conversão de testosterona em DHT (dihidrotestosterona) em >90% — mais potente que finasterida (que inibe só tipo 2, ~70%). DHT é o principal androgênio responsável pela miniaturização folicular na alopecia androgenética. Meia-vida: 5 semanas — efeito acumulativo. Levar 3–6 meses para efeito máximo. Monitorar PSA e testosterona a cada 6–12 meses. Não partir ou abrir a cápsula (risco de absorção cutânea).'},
 ];
 
-// FIBRAS por 100g
-const FIBRA_DB = {
-  'leite-po':0,'ovos':0,'manteiga':0,'amendoas':12.5,'castanha':7.5,
-  'patinho':0,'feijao-branco':6.0,'batata-doce':2.5,'beterraba':2.8,
-  'brocolis':2.6,'cenoura':3.0,'abobrinha':1.0,'espinafre':2.2,
-  'tomate':1.2,'cebola':1.7,'alho':2.1,'azeite':0
-};
+// ── IDR ───────────────────────────────────────────────────────────────────
+const IDR={vitA:900,vitD:15,vitE:15,vitK1:120,vitK2:150,vitC:90,vitB1:1.2,vitB2:1.3,vitB3:16,vitB5:5,vitB6:1.3,vitB7:30,vitB9:400,vitB12:2.4,colina:550,calcio:1000,fosforo:700,magnesio:420,potassio:3500,sodio:2300,ferro:8,zinco:11,cobre:0.9,manganes:2.3,selenio:55,iodo:150,cromo:35,molibdenio:45,omega3:1.6,omega6:17};
 
-// SUPLEMENTOS + INGREDIENTES FIXOS — contribuição aos micros
-const SUPL_MICROS = {
-  magnesio: 300,        // Magnésio Tri Complex
-  vitD: 175,            // D3 7.000 UI (1 UI = 0.025ug)
-  vitK2: 150,           // K2-MK7 150ug suplemento
-  omega3: 2,            // Ômega-3 EPA+DHA 2g suplemento
-  // iodo: inserido manualmente pelo usuário via sal iodado no picadinho
-};
-
-// IDR ADULTO MASCULINO
-const IDR = {
-  // Vitaminas lipossolúveis
-  vitA: 900, vitD: 15, vitE: 15, vitK1: 120, vitK2: 150,
-  // Vitaminas hidrossolúveis
-  vitC: 90, vitB1: 1.2, vitB2: 1.3, vitB3: 16, vitB5: 5,
-  vitB6: 1.3, vitB7: 30, vitB9: 400, vitB12: 2.4, colina: 550,
-  // Minerais maiores
-  calcio: 1000, fosforo: 700, magnesio: 420, potassio: 3500, sodio: 2300,
-  // Oligominerais
-  ferro: 8, zinco: 11, cobre: 0.9, manganes: 2.3,
-  selenio: 55, iodo: 150, cromo: 35, molibdenio: 45,
-  // Ácidos graxos essenciais
-  omega3: 1.6,   // g/dia ALA (EPA+DHA via suplemento)
-  omega6: 17,    // g/dia LA
-};
-
-const MICRO_LABELS = {
-  vitA:'Vitamina A', vitD:'Vitamina D3', vitE:'Vitamina E', vitK1:'Vitamina K1', vitK2:'Vitamina K2',
-  vitC:'Vitamina C', vitB1:'Vitamina B1 (Tiamina)', vitB2:'Vitamina B2 (Riboflavina)',
-  vitB3:'Vitamina B3 (Niacina)', vitB5:'Vitamina B5 (Pantot.)', vitB6:'Vitamina B6',
-  vitB7:'Vitamina B7 (Biotina)', vitB9:'Folato B9', vitB12:'Vitamina B12', colina:'Colina',
-  calcio:'Cálcio', fosforo:'Fósforo', magnesio:'Magnésio', potassio:'Potássio', sodio:'Sódio',
-  ferro:'Ferro', zinco:'Zinco', cobre:'Cobre', manganes:'Manganês',
-  selenio:'Selênio', iodo:'Iodo', cromo:'Cromo', molibdenio:'Molibdênio',
-  omega3:'Ômega-3 (EPA+DHA)', omega6:'Ômega-6',
-};
-
-const MICRO_UNITS = {
-  vitA:'ug', vitD:'ug', vitE:'mg', vitK1:'ug', vitK2:'ug',
-  vitC:'mg', vitB1:'mg', vitB2:'mg', vitB3:'mg', vitB5:'mg', vitB6:'mg',
-  vitB7:'ug', vitB9:'ug', vitB12:'ug', colina:'mg',
-  calcio:'mg', fosforo:'mg', magnesio:'mg', potassio:'mg', sodio:'mg',
-  ferro:'mg', zinco:'mg', cobre:'mg', manganes:'mg',
-  selenio:'ug', iodo:'ug', cromo:'ug', molibdenio:'ug',
-  omega3:'g', omega6:'g',
-};
-
-const MICRO_GROUPS = [
-  { title: 'Vitaminas Lipossolúveis', color: 'var(--orange)',
-    keys: ['vitA','vitD','vitE','vitK1','vitK2'] },
-  { title: 'Vitaminas Hidrossolúveis', color: 'var(--blue)',
-    keys: ['vitC','vitB1','vitB2','vitB3','vitB5','vitB6','vitB7','vitB9','vitB12','colina'] },
-  { title: 'Minerais Maiores', color: 'var(--green)',
-    keys: ['calcio','fosforo','magnesio','potassio','sodio'] },
-  { title: 'Oligominerais', color: 'var(--purple)',
-    keys: ['ferro','zinco','cobre','manganes','selenio','iodo','cromo','molibdenio'] },
-  { title: 'Ácidos Graxos Essenciais', color: 'var(--accent)',
-    keys: ['omega3','omega6'] },
+const MLABELS={vitA:'Vitamina A',vitD:'Vitamina D3',vitE:'Vitamina E',vitK1:'Vitamina K1',vitK2:'Vitamina K2',vitC:'Vitamina C',vitB1:'B1 Tiamina',vitB2:'B2 Riboflavina',vitB3:'B3 Niacina',vitB5:'B5 Pantot.',vitB6:'Vitamina B6',vitB7:'B7 Biotina',vitB9:'B9 Folato',vitB12:'Vitamina B12',colina:'Colina',calcio:'Cálcio',fosforo:'Fósforo',magnesio:'Magnésio',potassio:'Potássio',sodio:'Sódio',ferro:'Ferro',zinco:'Zinco',cobre:'Cobre',manganes:'Manganês',selenio:'Selênio',iodo:'Iodo',cromo:'Cromo',molibdenio:'Molibdênio',omega3:'Ômega-3',omega6:'Ômega-6'};
+const MUNITS={vitA:'µg',vitD:'µg',vitE:'mg',vitK1:'µg',vitK2:'µg',vitC:'mg',vitB1:'mg',vitB2:'mg',vitB3:'mg',vitB5:'mg',vitB6:'mg',vitB7:'µg',vitB9:'µg',vitB12:'µg',colina:'mg',calcio:'mg',fosforo:'mg',magnesio:'mg',potassio:'mg',sodio:'mg',ferro:'mg',zinco:'mg',cobre:'mg',manganes:'mg',selenio:'µg',iodo:'µg',cromo:'µg',molibdenio:'µg',omega3:'g',omega6:'g'};
+const MGROUPS=[
+  {title:'Vitaminas Lipossolúveis',color:'var(--or)',keys:['vitA','vitD','vitE','vitK1','vitK2']},
+  {title:'Vitaminas Hidrossolúveis',color:'var(--bl)',keys:['vitC','vitB1','vitB2','vitB3','vitB5','vitB6','vitB7','vitB9','vitB12','colina']},
+  {title:'Minerais Maiores',color:'var(--gr)',keys:['calcio','fosforo','magnesio','potassio','sodio']},
+  {title:'Oligominerais',color:'var(--pu)',keys:['ferro','zinco','cobre','manganes','selenio','iodo','cromo','molibdenio']},
+  {title:'Ácidos Graxos',color:'var(--ac)',keys:['omega3','omega6']},
 ];
 
-// ─────────────────────────────────────────────
-// ESTADO + LOCALSTORAGE
-// ─────────────────────────────────────────────
-const LS_KEY = 'nutri_rafao_v1';
+// Curiosidades dos micronutrientes
+const MINFO={
+  vitA:'<strong>Vitamina A (Retinol / beta-caroteno).</strong> IDR: 900µg RAE. Essencial para visão (rodopsina), diferenciação epitelial, imunidade inata e síntese de glicoproteínas. Toxicidade com retinol pré-formado (suplementos) acima de 3.000µg/dia. Beta-caroteno dos alimentos: conversão controlada, sem risco. Deficiência: cegueira noturna, xeroftalmia.',
+  vitD:'<strong>Vitamina D3 (Colecalciferol).</strong> IDR: 15µg (600 UI). Ativa >200 genes via receptor VDR. Funções: absorção de cálcio, imunidade inata (síntese de catelicidina), síntese de testosterona, neuroproteção. Status atual: 11,5 ng/mL (insuficiência severa). Meta: 40–60 ng/mL. A calculadora soma 175µg (+) da suplementação de 7.000 UI.',
+  vitE:'<strong>Vitamina E (alfa-tocoferol).</strong> IDR: 15mg. Principal antioxidante lipossolúvel: protege membranas celulares da peroxidação lipídica, especialmente ácidos graxos poli-insaturados. Sinergia com vitamina C: C regenera E oxidada. Importante para função plaquetária e imunidade. Amêndoas (25,6mg/100g) e azeite (14,3mg/100g) são as principais fontes nesta receita.',
+  vitK1:'<strong>Vitamina K1 (Filoquinona).</strong> IDR: 120µg. Essencial para coagulação sanguínea (ativa fatores II, VII, IX, X). Fonte principal: vegetais verde-escuros. Espinafre (483µg/100g) e brócolis (102µg/100g) são as fontes dominantes aqui. Não confundir com K2: K1 vai preferencialmente ao fígado, K2 vai para ossos e artérias.',
+  vitK2:'<strong>Vitamina K2 (Menaquinonas).</strong> IDR: 150µg (sem valor oficial no Brasil — estimativa funcional). Ativa osteocalcina (mineralização óssea) e MGP (previne calcificação arterial). Forma MK-7 do suplemento tem meia-vida de 72h vs 6h da MK-4. Co-obrigatória com D3 em doses altas. A calculadora soma 150µg (+) do suplemento K2-MK7.',
+  vitC:'<strong>Vitamina C (Ácido ascórbico).</strong> IDR: 90mg. Antioxidante hidrossolúvel, cofator de prolil hidroxilase (síntese de colágeno), potencializa absorção de ferro não-heme (conversão Fe³⁺→Fe²⁺). Regenera vitamina E oxidada. Anti-histamínico natural. Atenção: doses altas (>1g) reduzem absorção de Venvanse — não suplementar vitamina C próximo ao horário do medicamento.',
+  vitB1:'<strong>Vitamina B1 (Tiamina).</strong> IDR: 1,2mg. Cofator de piruvato desidrogenase e alfa-cetoglutarato desidrogenase — essencial para metabolismo energético aeróbico. Deficiência causa beribéri e encefalopatia de Wernicke. Álcool interfere significativamente na absorção. Esta receita cobre ~75% da IDR — lacuna aceita.',
+  vitB2:'<strong>Vitamina B2 (Riboflavina).</strong> IDR: 1,3mg. Precursor de FAD e FMN — coenzimas da cadeia transportadora de elétrons. Essencial para metabolismo de macronutrientes e ativação de B6 e folato. Leite em pó (1,5mg/100g) é a maior fonte nesta receita. Sensível à luz — armazenar embalagem protegida.',
+  vitB3:'<strong>Vitamina B3 (Niacina).</strong> IDR: 16mg. Precursor de NAD⁺ e NADP⁺ — coenzimas de >400 reações enzimáticas. Crucial para reparo de DNA (PARP) e sinalização celular. Em altas doses (1–3g/dia) reduz triglicerídeos e aumenta HDL. Patinho (5,8mg/100g) é a maior fonte nesta receita.',
+  vitB5:'<strong>Vitamina B5 (Ácido pantotênico).</strong> IDR: 5mg. Componente da coenzima A — essencial para síntese de ácidos graxos, acetilcolina, colesterol e metabolismo energético. Amplamente distribuída nos alimentos — deficiência isolada é extremamente rara. Patinho e batata-doce são as fontes principais nesta receita.',
+  vitB6:'<strong>Vitamina B6 (Piridoxina).</strong> IDR: 1,3mg. Cofator de >100 reações enzimáticas. Essencial para síntese de neurotransmissores: serotonina (triptofano→5-HTP→serotonina), dopamina, GABA. Especialmente relevante com uso de Venvanse — o medicamento afeta vias dopaminérgicas que dependem de B6. Alho (1,24mg/100g) é fonte concentrada.',
+  vitB7:'<strong>Vitamina B7 (Biotina).</strong> IDR: 30µg. Cofator de carboxilases — enzimas que adicionam CO₂ a substratos (piruvato carboxilase, acetil-CoA carboxilase). Essencial para síntese de ácidos graxos, gliconeogênese e metabolismo de aminoácidos. A avidina da clara de ovo crua inibe absorção de biotina — ovos cozidos eliminam esse problema. Amêndoas (61µg/100g) cobrem 204% IDR.',
+  vitB9:'<strong>Vitamina B9 (Folato).</strong> IDR: 400µg. Essencial para síntese de DNA e divisão celular. Forma biologicamente ativa: 5-metilTHF. Doação de grupamentos metil no ciclo do folato (metilação do DNA e homocisteína). Déficit eleva homocisteína — fator de risco cardiovascular independente. Beterraba (109µg/100g) e feijão-branco (146µg/100g) são as maiores fontes nesta receita.',
+  vitB12:'<strong>Vitamina B12 (Cobalamina).</strong> IDR: 2,4µg. Cofator de metionina sintase (ciclo do folato) e metilmalonil-CoA mutase (metabolismo de ácidos graxos). Essencial para mielinização neuronal. Deficiência: anemia megaloblástica, neuropatia periférica, demência. Patinho (2,4µg/100g = 100% IDR) é a fonte dominante. Absorção depende do fator intrínseco gástrico — monitorar em pacientes com gastrite atrófica.',
+  colina:'<strong>Colina.</strong> IDR: 550mg. Essencial para síntese de fosfatidilcolina (membranas celulares), acetilcolina (neurotransmissão), e para exportação de VLDL pelo fígado (deficiência causa esteatose hepática). O ovo (294mg/100g) é a maior fonte: 4 ovos = 280mg. Relevante pois dietas sem ovos frequentemente apresentam deficiência de colina.',
+  calcio:'<strong>Cálcio.</strong> IDR: 1.000mg. Mineralização óssea (99% do cálcio corporal está nos ossos), contração muscular, coagulação, sinalização celular. Absorção depende de D3 e K2. Leite em pó (1.257mg/100g) é a fonte dominante: 40g = 503mg (50% IDR). Atenção: excesso de sódio (sal) aumenta excreção urinária de cálcio.',
+  fosforo:'<strong>Fósforo.</strong> IDR: 700mg. Componente de ATP (energia), DNA/RNA, fosfolipídios de membrana. Razão cálcio:fósforo ideal é 1:1 — excesso de fósforo (refrigerantes, alimentos processados) compete com cálcio. Esta receita tem excelente relação Ca:P com leite em pó e patinho como fontes principais.',
+  magnesio:'<strong>Magnésio.</strong> IDR: 420mg. Cofator de >300 reações enzimáticas incluindo síntese de ATP, replicação de DNA, síntese proteica. Venvanse aumenta excreção urinária — suplementação é especialmente indicada. A calculadora soma 300mg (+) do Magnésio Tri Complex. Bisglicinato noturno melhora qualidade do sono e reduz rebote do estimulante.',
+  potassio:'<strong>Potássio.</strong> IDR: 3.500mg. Principal cátion intracelular. Regula pressão arterial (antagonista do sódio), condução nervosa, contração muscular, balanço ácido-base. Beterraba (325mg/100g), espinafre (558mg/100g) e patinho (333mg/100g) são as fontes principais. Esta receita tem relação sódio:potássio desfavorável pelo sal — considerar redução.',
+  sodio:'<strong>Sódio.</strong> IDR: 2.300mg (limite máximo). Principal cátion extracelular. 15g de sal/dia desta receita = ~5.800mg sódio — 2,5× acima da IDR. Monitorar pressão arterial. Reduzir para 7–8g/dia total (5g R1 + 2–3g R2) colocaria o sódio em ~3.000mg — mais próximo da meta. Potássio, magnésio e cálcio desta receita ajudam a atenuar o efeito hipertensivo.',
+  ferro:'<strong>Ferro.</strong> IDR: 8mg. Componente da hemoglobina (transporte de O₂), mioglobina e citocromos da cadeia respiratória. Ferro heme do patinho tem biodisponibilidade 15–35% vs 2–20% do ferro não-heme vegetal. A vitamina C (brócolis, tomate) potencializa absorção do ferro não-heme. Café e chá inibem absorção — evitar 1h antes/após esta refeição.',
+  zinco:'<strong>Zinco.</strong> IDR: 11mg. Cofator de >300 enzimas. Essencial para síntese de DNA, divisão celular, cicatrização, imunidade e função gonadal. Patinho (4,5mg/100g) e amêndoas (3,1mg/100g) são as principais fontes. Biodisponibilidade do zinco animal é 3–4× superior ao vegetal. Fitatos de feijão e cereais reduzem absorção do zinco vegetal.',
+  cobre:'<strong>Cobre.</strong> IDR: 0,9mg. Cofator de ceruloplasmina, citocromo c oxidase, superóxido dismutase Cu-Zn. Essencial para metabolismo do ferro, síntese de colágeno e mielinização. Antagonismo com zinco em altas doses — excesso de suplementação de zinco pode causar deficiência de cobre. Esta receita cobre ~89% da IDR — lacuna leve aceitável.',
+  manganes:'<strong>Manganês.</strong> IDR: 2,3mg. Cofator de arginase, piruvato carboxilase e superóxido dismutase Mn (mitocôndrial). Essencial para síntese de glicosaminoglicanas (cartilagem) e uréia. Amêndoas (2,5mg/100g) e espinafre (0,9mg/100g) são fontes principais. Esta receita tem lacuna leve (~74% IDR) — aceitável.',
+  selenio:'<strong>Selênio.</strong> IDR: 55µg. Cofator de glutationa peroxidase (GPx — antioxidante central), tiorredoxina redutase e iodotironina deiodinase (ativação do T3 tireoidiano). A castanha-do-pará (1.917µg/100g!) cobre toda a necessidade com 5g. Limite superior tolerável: 400µg/dia. Monitorar cuidadosamente a dose da castanha.',
+  iodo:'<strong>Iodo.</strong> IDR: 150µg. Essencial para síntese dos hormônios tireóideos T3 e T4. Total desta receita (sal iodado R1+R2 + leite em pó): ~830µg — acima da IDR mas dentro do limite seguro (1.100µg/dia OMS). A calculadora soma o iodo do sal automaticamente. Deficiência causa hipotireoidismo, bócio e déficit cognitivo — por isso NÃO substituir o sal iodado.',
+  cromo:'<strong>Cromo.</strong> IDR: 35µg. Potencia ação da insulina através do fator de tolerância à glicose (FTG). Melhora captação de glicose celular. Deficiência associada a resistência insulínica. Esta receita cobre a IDR principalmente via leite em pó e amêndoas. Biodisponibilidade do cromo alimentar é baixa (0,4–2,5%).',
+  molibdenio:'<strong>Molibdênio.</strong> IDR: 45µg. Cofator de xantina oxidase (metabolismo de purinas → ácido úrico), sulfito oxidase (detoxificação de sulfitos) e aldeído oxidase. Feijão-branco é a maior fonte (100µg/100g = 222% IDR). Deficiência isolada é extremamente rara. Excesso interfere no metabolismo do cobre.',
+  omega3:'<strong>Ômega-3 (EPA+DHA).</strong> IDR: 1,6g ALA. EPA e DHA são as formas biologicamente ativas. A calculadora soma 2g (+) do suplemento Ômega-3 TG. EPA: anti-inflamatório (compete com ácido araquidônico). DHA: componente estrutural do cérebro (60% dos ácidos graxos cerebrais). Meta para saúde cardiovascular e cerebral: 2g EPA+DHA/dia. Exame de índice ômega-3 agendado 04/05/2026.',
+  omega6:'<strong>Ômega-6 (Linoleico/Araquidônico).</strong> IDR: 17g. Pró-inflamatório em excesso — razão ω-6:ω-3 moderna (~15:1) é muito superior à evolutiva (~4:1). Esta receita com azeite (em vez de óleo de girassol) e ômega-3 suplementado resulta em razão ~4:1 — próxima ao ideal. Amêndoas contribuem com ω-6 mas têm perfil lipídico geral favorável.',
+};
 
-function saveToStorage() {
-  try {
-    const data = {
-      cafe: cafeGrams,
-      pic: picGrams,
-      extraCafeData: Object.fromEntries(Object.keys(extraCafe).map(id => [id, { grams: extraCafe[id], data: extraDB[id] || null }])),
-      extraPicData:  Object.fromEntries(Object.keys(extraPic).map(id  => [id, { grams: extraPic[id],  data: extraDB[id] || null }])),
-    };
-    localStorage.setItem(LS_KEY, JSON.stringify(data));
-  } catch(e) { console.warn('localStorage indisponível', e); }
+// ── SUPL_MICROS ───────────────────────────────────────────────────────────
+const SUPL_MICROS={magnesio:300,vitD:175,vitK2:150,omega3:2};
+
+// ── LOCALSTORAGE ──────────────────────────────────────────────────────────
+const LS='nutri_r2v1';
+let g1={},g2={};
+R1.forEach(i=>g1[i.id]=i.grams);
+R2.forEach(i=>g2[i.id]=i.grams);
+(()=>{try{const d=JSON.parse(localStorage.getItem(LS)||'null');if(!d)return;if(d.r1)Object.keys(g1).forEach(k=>{if(d.r1[k]!==undefined)g1[k]=d.r1[k];});if(d.r2)Object.keys(g2).forEach(k=>{if(d.r2[k]!==undefined)g2[k]=d.r2[k];});}catch(e){}})();
+function saveLS(){try{localStorage.setItem(LS,JSON.stringify({r1:g1,r2:g2}));}catch(e){}}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────
+const fmt=n=>Math.round(n*10)/10;
+
+function calcSec(list,gramsObj){
+  let kcal=0,prot=0,carbo=0,gord=0,fibra=0;
+  list.forEach(({id})=>{const d=DB[id],f=(gramsObj[id]||0)/100;kcal+=d.kcal*f;prot+=d.prot*f;carbo+=d.carbo*f;gord+=d.gord*f;fibra+=d.fibra*f;});
+  return{kcal,prot,carbo,gord,fibra};
 }
-
-function loadFromStorage() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return false;
-    const data = JSON.parse(raw);
-    if (data.cafe) Object.assign(cafeGrams, data.cafe);
-    if (data.pic)  Object.assign(picGrams, data.pic);
-    // Restaurar extras
-    if (data.extraCafeData) {
-      Object.entries(data.extraCafeData).forEach(([id, val]) => {
-        if (val.data) { extraDB[id] = val.data; FIBRA_DB[id] = val.data._fibra || 0; }
-        extraCafe[id] = val.grams;
-      });
-    }
-    if (data.extraPicData) {
-      Object.entries(data.extraPicData).forEach(([id, val]) => {
-        if (val.data) { extraDB[id] = val.data; FIBRA_DB[id] = val.data._fibra || 0; }
-        extraPic[id] = val.grams;
-      });
-    }
-    return true;
-  } catch(e) { return false; }
-}
-
-let cafeGrams = {};
-let picGrams = {};
-CAFE.forEach(i => cafeGrams[i.id] = i.grams);
-PICADINHO.forEach(i => picGrams[i.id] = i.grams);
-
-// ─────────────────────────────────────────────
-// CÁLCULOS
-// ─────────────────────────────────────────────
-function calcMacro(list, gramsObj) {
-  let kcal=0, prot=0, carbo=0, gord=0, fibra=0;
-  list.forEach(({ id }) => {
-    const g = gramsObj[id] || 0;
-    const d = DB[id];
-    const f = g / 100;
-    kcal += d.kcal * f;
-    prot += d.prot * f;
-    carbo += d.carbo * f;
-    gord += d.gord * f;
-    fibra += (FIBRA_DB[id] || 0) * f;
+function calcMicros(){
+  const t={};Object.keys(IDR).forEach(k=>t[k]=0);
+  [[R1,g1],[R2,g2]].forEach(([list,grams])=>{
+    list.forEach(({id})=>{const d=DB[id],f=(grams[id]||0)/100;Object.keys(IDR).forEach(k=>{if(d[k]!==undefined)t[k]+=d[k]*f;});});
   });
-  return { kcal, prot, carbo, gord, fibra };
+  Object.entries(SUPL_MICROS).forEach(([k,v])=>{t[k]=(t[k]||0)+v;});
+  return t;
 }
 
-function calcMacroFull(list, gramsObj, extraGrams) {
-  const base = calcMacro(list, gramsObj);
-  // Adicionar extras
-  const allDB = { ...DB, ...extraDB };
-  Object.entries(extraGrams).forEach(([id, g]) => {
-    const d = allDB[id]; if (!d) return;
-    const f = g / 100;
-    base.kcal  += (d.kcal  || 0) * f;
-    base.prot  += (d.prot  || 0) * f;
-    base.carbo += (d.carbo || 0) * f;
-    base.gord  += (d.gord  || 0) * f;
-    base.fibra += (FIBRA_DB[id] || 0) * f;
-  });
-  return base;
-}
-
-function calcMicros(cafeGrams, picGrams) {
-  return calcMicrosWithExtras(cafeGrams, picGrams, extraCafe, extraPic);
-}
-function calcMicrosWithExtras(cafeGrams, picGrams, extraCafeG, extraPicG) {
-  const totals = {};
-  Object.keys(IDR).forEach(k => totals[k] = 0);
-
-  const allLists = [
-    { list: CAFE, grams: cafeGrams },
-    { list: PICADINHO, grams: picGrams }
-  ];
-
-  // Aliases: campos antigos do DB mapeiam para novas keys do IDR
-  const ALIASES = { folato:'vitB9', biotina:'vitB7' };
-
-  allLists.forEach(({ list, grams }) => {
-    list.forEach(({ id }) => {
-      const g = grams[id] || 0;
-      const d = DB[id];
-      const f = g / 100;
-      Object.keys(IDR).forEach(k => {
-        if (d[k] !== undefined) totals[k] += d[k] * f;
-      });
-      // Aplicar aliases (campos antigos do DB)
-      Object.entries(ALIASES).forEach(([oldKey, newKey]) => {
-        if (d[oldKey] !== undefined) totals[newKey] = (totals[newKey] || 0) + d[oldKey] * f;
-      });
-    });
-  });
-
-  // Adicionar extras dinâmicos
-  const allDB = { ...DB, ...extraDB };
-  [[extraCafeG],[extraPicG]].forEach(([eg]) => {
-    Object.entries(eg).forEach(([id, g]) => {
-      const d = allDB[id]; if (!d) return;
-      const f = g / 100;
-      Object.keys(IDR).forEach(k => {
-        if (d[k] !== undefined) totals[k] = (totals[k]||0) + d[k] * f;
-      });
-      Object.entries(ALIASES).forEach(([oldKey, newKey]) => {
-        if (d[oldKey] !== undefined) totals[newKey] = (totals[newKey]||0) + d[oldKey] * f;
-      });
-    });
-  });
-
-  // Adicionar suplementos + ingredientes fixos (sal iodado, etc.)
-  Object.keys(SUPL_MICROS).forEach(k => {
-    if (totals[k] !== undefined) totals[k] += SUPL_MICROS[k];
-    else totals[k] = SUPL_MICROS[k];
-  });
-
-  return totals;
-}
-
-// ─────────────────────────────────────────────
-// RENDER
-// ─────────────────────────────────────────────
-function fmt(n) { return Math.round(n * 10) / 10; }
-function fmtPct(n) { return Math.min(999, Math.round(n)); }
-
-function renderIngRow(item, gramsObj, onChange, removable=false) {
-  const d = DB[item.id] || extraDB[item.id];
-  if (!d) return document.createElement('div');
-  let g = gramsObj[item.id] || 0;
-
-  const row = document.createElement('div');
-  row.className = 'ing-row';
-  row.dataset.id = item.id;
-
-  function removeItem() {
-    wrap.classList.add('swipe-out');
-    setTimeout(() => {
-      delete gramsObj[item.id];
-      wrap.remove();
-      updateAll();
-      markDirty();
-    }, 250);
+// ── RENDER INGREDIENTE ────────────────────────────────────────────────────
+function mkRow(item,gramsObj){
+  const d=DB[item.id];let g=gramsObj[item.id]||0;
+  const wrap=document.createElement('div');wrap.className='irow';
+  function chips(g){
+    const f=g/100;
+    return `<div class=chips>
+      <div class=chip><div class=cdot style="background:var(--ac)"></div><span style="color:var(--ac)">${fmt(d.kcal*f)}</span><span class=chip style="background:none;color:var(--mu);font-size:9px">kcal</span></div>
+      <div class=chip><div class=cdot style="background:var(--gr)"></div><span style="color:var(--gr)">${fmt(d.prot*f)}g</span><span style="color:var(--mu);font-size:9px">prot</span></div>
+      <div class=chip><div class=cdot style="background:var(--bl)"></div><span style="color:var(--bl)">${fmt(d.carbo*f)}g</span><span style="color:var(--mu);font-size:9px">carbo</span></div>
+      <div class=chip><div class=cdot style="background:var(--or)"></div><span style="color:var(--or)">${fmt(d.gord*f)}g</span><span style="color:var(--mu);font-size:9px">gord</span></div>
+    </div>`;
   }
-
-  function buildHTML(g) {
-    const f = g / 100;
-    const kcal = fmt(d.kcal * f);
-    const prot = fmt(d.prot * f);
-    const carbo = fmt(d.carbo * f);
-    const gord = fmt(d.gord * f);
-    return `
-      <div class="ing-row-top">
-        <div class="ing-name">${d.name}</div>
-        <div class="stepper">
-          <button class="step-btn step-minus" type="button">−</button>
-          <div class="step-display">
-            <span class="step-val">${g}</span>
-            <span class="step-unit">${d.unit}</span>
-          </div>
-          <button class="step-btn step-plus" type="button">+</button>
-        </div>
-        <button class="remove-btn" title="Remover" style="${removable ? '' : ''}">×</button>
+  wrap.innerHTML=`
+    <div class=itop>
+      <div class=iname>${d.name}</div>
+      <div class=stepper>
+        <button class=sbtn type=button>−</button>
+        <div class=sdisp><span class=sval contenteditable=true inputmode=numeric>${g}</span><span class=sunit>${d.unit}</span></div>
+        <button class=sbtn type=button>+</button>
       </div>
-      <div class="ing-row-macros">
-        <div class="macro-chip">
-          <div class="macro-chip-dot" style="background:var(--accent)"></div>
-          <span class="macro-chip-val" style="color:var(--accent)">${kcal}</span>
-          <span class="macro-chip-lbl">kcal</span>
-        </div>
-        <div class="macro-chip">
-          <div class="macro-chip-dot" style="background:var(--green)"></div>
-          <span class="macro-chip-val" style="color:var(--green)">${prot}g</span>
-          <span class="macro-chip-lbl">prot</span>
-        </div>
-        <div class="macro-chip">
-          <div class="macro-chip-dot" style="background:var(--blue)"></div>
-          <span class="macro-chip-val" style="color:var(--blue)">${carbo}g</span>
-          <span class="macro-chip-lbl">carbo</span>
-        </div>
-        <div class="macro-chip">
-          <div class="macro-chip-dot" style="background:var(--orange)"></div>
-          <span class="macro-chip-val" style="color:var(--orange)">${gord}g</span>
-          <span class="macro-chip-lbl">gord</span>
-        </div>
-      </div>
-    `;
+    </div>${chips(g)}`;
+
+  wrap.querySelector('.iname').addEventListener('click',()=>openModal(d.name,d.info));
+
+  function upd(newG){
+    g=Math.max(0,Math.round(newG));gramsObj[item.id]=g;
+    const sv=wrap.querySelector('.sval');
+    if(document.activeElement!==sv)sv.textContent=g;
+    wrap.querySelector('.chips').outerHTML=chips(g);
+    // rebuild chips
+    const newChips=wrap.querySelector('.itop').nextElementSibling;
+    updateAll();saveLS();
+  }
+  // rebuild approach: replace innerHTML of chips div
+  function updClean(newG){
+    g=Math.max(0,Math.round(newG));gramsObj[item.id]=g;
+    const sv=wrap.querySelector('.sval');
+    if(document.activeElement!==sv)sv.textContent=g;
+    const chipsEl=wrap.querySelectorAll('.chips')[0];
+    if(chipsEl)chipsEl.outerHTML=chips(g);
+    updateAll();saveLS();
   }
 
-  // Criar wrapper para swipe
-  const wrap = document.createElement('div');
-  wrap.className = 'ing-row-wrap';
-  wrap.appendChild(row);
+  const [btnM,btnP]=wrap.querySelectorAll('.sbtn');
+  btnM.addEventListener('click',()=>updClean(g-5));
+  btnP.addEventListener('click',()=>updClean(g+5));
 
-  row.innerHTML = buildHTML(g);
-
-  // Botão × — remover item
-  row.querySelector('.remove-btn').addEventListener('click', e => {
-    e.stopPropagation();
-    // Garantir que o clique/toque foi diretamente no botão × e não em outra área
-    const btn = e.currentTarget;
-    const rect = btn.getBoundingClientRect();
-    // Verificar se o ponto de toque está dentro do botão (com margem de 8px)
-    const margin = 8;
-    const x = e.clientX, y = e.clientY;
-    if (
-      x >= rect.left - margin && x <= rect.right + margin &&
-      y >= rect.top - margin && y <= rect.bottom + margin
-    ) {
-      removeItem();
-    }
+  let hold;
+  [[btnM,-5],[btnP,5]].forEach(([btn,d])=>{
+    btn.addEventListener('pointerdown',()=>{hold=setInterval(()=>updClean(g+d),150);});
+    ['pointerup','pointerleave','pointercancel'].forEach(ev=>btn.addEventListener(ev,()=>clearInterval(hold)));
   });
 
-  function update(newG) {
-    g = Math.max(0, Math.round(newG));
-    gramsObj[item.id] = g;
-    const stepValEl = row.querySelector('.step-val');
-    if (document.activeElement !== stepValEl) stepValEl.textContent = g;
-    const f = g / 100;
-    const chips = row.querySelectorAll('.macro-chip-val');
-    chips[0].textContent = fmt(d.kcal * f);
-    chips[1].textContent = fmt(d.prot * f) + 'g';
-    chips[2].textContent = fmt(d.carbo * f) + 'g';
-    chips[3].textContent = fmt(d.gord * f) + 'g';
-    onChange();
-    markDirty();
-  }
-
-  row.querySelector('.step-minus').addEventListener('click', () => update(g - 5));
-  row.querySelector('.step-plus').addEventListener('click', () => update(g + 5));
-
-  // Edição direta clicando no número
-  const stepValEl = row.querySelector('.step-val');
-  stepValEl.contentEditable = 'true';
-  stepValEl.inputMode = 'numeric';
-  stepValEl.addEventListener('focus', () => {
-    // selecionar tudo ao focar
-    const range = document.createRange();
-    range.selectNodeContents(stepValEl);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
+  const sv=wrap.querySelector('.sval');
+  sv.addEventListener('focus',()=>{const r=document.createRange(),s=window.getSelection();r.selectNodeContents(sv);s.removeAllRanges();s.addRange(r);});
+  sv.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();sv.blur();}
+    if(e.key==='Escape'){sv.textContent=g;sv.blur();}
+    if(!/[0-9]/.test(e.key)&&!['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Enter','Escape'].includes(e.key))e.preventDefault();
   });
-  stepValEl.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); stepValEl.blur(); }
-    if (e.key === 'Escape') { stepValEl.textContent = g; stepValEl.blur(); }
-    // só permitir dígitos
-    if (!e.key.match(/[0-9]/) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Enter','Escape'].includes(e.key)) {
-      e.preventDefault();
-    }
-  });
-  stepValEl.addEventListener('blur', () => {
-    const val = parseInt(stepValEl.textContent) || 0;
-    update(val);
-  });
-
-  // Toque longo nos botões para incremento contínuo
-  let holdTimer;
-  ['.step-minus', '.step-plus'].forEach(cls => {
-    const btn = row.querySelector(cls);
-    const delta = cls === '.step-plus' ? 5 : -5;
-    btn.addEventListener('pointerdown', () => {
-      holdTimer = setInterval(() => update(g + delta), 150);
-    });
-    ['pointerup','pointerleave','pointercancel'].forEach(ev =>
-      btn.addEventListener(ev, () => clearInterval(holdTimer))
-    );
-  });
-
+  sv.addEventListener('blur',()=>updClean(parseInt(sv.textContent)||0));
   return wrap;
 }
 
-function updateRowValues(row, id, g) {
-  // mantido por compatibilidade
+// ── MODAL ─────────────────────────────────────────────────────────────────
+function openModal(title,body){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+// ── UPDATE ALL ────────────────────────────────────────────────────────────
+function updateAll(){
+  const r1=calcSec(R1,g1),r2=calcSec(R2,g2);
+  const T={kcal:r1.kcal+r2.kcal,prot:r1.prot+r2.prot,carbo:r1.carbo+r2.carbo,gord:r1.gord+r2.gord,fibra:r1.fibra+r2.fibra};
+  const kc=T.kcal>2100?'var(--rd)':T.kcal>1950?'var(--or)':'var(--ac)';
+  document.getElementById('h-kcal').textContent=Math.round(T.kcal);document.getElementById('h-kcal').style.color=kc;
+  document.getElementById('h-prot').textContent=Math.round(T.prot)+'g';document.getElementById('h-prot').style.color=T.prot>=150?'var(--gr)':'var(--or)';
+  document.getElementById('h-carbo').textContent=Math.round(T.carbo)+'g';
+  document.getElementById('h-gord').textContent=Math.round(T.gord)+'g';
+  const fc=T.fibra>=38?'var(--gr)':T.fibra>=25?'var(--or)':'var(--rd)';
+  document.getElementById('h-fibra').textContent=Math.round(T.fibra)+'g';document.getElementById('h-fibra').style.color=fc;
+  document.getElementById('r1-sub').textContent=Math.round(r1.kcal)+' kcal';
+  document.getElementById('r2-sub').textContent=Math.round(r2.kcal)+' kcal';
+  const m=calcMicros();renderMicros(m);renderAlerts(m);
 }
 
-function renderMicros(totals) {
-  const grid = document.getElementById('micro-grid');
-  grid.innerHTML = '';
-
-  MICRO_GROUPS.forEach(group => {
-    const box = document.createElement('div');
-    box.className = 'micro-group';
-    box.innerHTML = `<div class="micro-group-title" style="color:${group.color}">● ${group.title}</div>`;
-
-    group.keys.forEach(k => {
-      const val = totals[k] || 0;
-      const idr = IDR[k];
-      const pct = (val / idr) * 100;
-      const pctCapped = Math.min(pct, 100);
-      const color = pct >= 100 ? 'var(--green)' : pct >= 75 ? 'var(--orange)' : 'var(--red)';
-      const suplKeys = { vitD:true, magnesio:true, vitK2:true, omega3:true };
-      const label = suplKeys[k]
-        ? `${fmt(val)} ${MICRO_UNITS[k]} (+supl)`
-        : `${fmt(val)} ${MICRO_UNITS[k]}`;
-
-      const row = document.createElement('div');
-      row.className = 'micro-row';
-      row.innerHTML = `
-        <span class="micro-name">${MICRO_LABELS[k]}</span>
-        <div class="micro-bar-wrap">
-          <div class="micro-bar-track">
-            <div class="micro-bar-fill" style="width:${pctCapped}%;background:${color}"></div>
-          </div>
-        </div>
-        <span class="micro-val" style="color:var(--muted)">${label}</span>
-        <span class="micro-pct" style="color:${color}">${fmtPct(pct)}%</span>
-      `;
+// ── MICROS ────────────────────────────────────────────────────────────────
+const SKEYS={vitD:1,magnesio:1,vitK2:1,omega3:1};
+function renderMicros(t){
+  const g=document.getElementById('micro-grid');g.innerHTML='';
+  MGROUPS.forEach(grp=>{
+    const box=document.createElement('div');box.className='mgrp';
+    box.innerHTML=`<div class=mgrp-title style="color:${grp.color}">● ${grp.title}</div>`;
+    grp.keys.forEach(k=>{
+      const val=t[k]||0,idr=IDR[k],pct=(val/idr)*100,pC=Math.min(pct,100);
+      const c=pct>=100?'var(--gr)':pct>=70?'var(--or)':'var(--rd)';
+      const lbl=`${fmt(val)} ${MUNITS[k]}${SKEYS[k]?' (+)':''}`;
+      const row=document.createElement('div');row.className='mrow';
+      row.innerHTML=`<span class=mname>${MLABELS[k]}</span><div class=mbar><div class=mtrack><div class=mfill style="width:${pC}%;background:${c}"></div></div></div><span class=mval style="color:var(--mu)">${lbl}</span><span class=mpct style="color:${c}">${Math.min(999,Math.round(pct))}%</span>`;
+      row.addEventListener('click',()=>openModal(MLABELS[k],MINFO[k]||'Informação não disponível.'));
       box.appendChild(row);
     });
-
-    grid.appendChild(box);
+    g.appendChild(box);
   });
 }
 
-function updateAll() {
-  const cafe = calcMacroFull(CAFE, cafeGrams, extraCafe);
-  const pic  = calcMacroFull(PICADINHO, picGrams, extraPic);
-  const total = {
-    kcal: cafe.kcal + pic.kcal,
-    prot: cafe.prot + pic.prot,
-    carbo: cafe.carbo + pic.carbo,
-    gord: cafe.gord + pic.gord
-  };
-
-  // Header macros
-  const kcalColor = total.kcal > 2100 ? 'var(--red)' : total.kcal > 1950 ? 'var(--orange)' : 'var(--accent)';
-  document.getElementById('h-kcal').textContent = Math.round(total.kcal);
-  document.getElementById('h-kcal').style.color = kcalColor;
-  document.getElementById('h-prot').textContent = Math.round(total.prot) + 'g';
-  document.getElementById('h-prot').style.color = total.prot >= 150 ? 'var(--green)' : 'var(--orange)';
-  document.getElementById('h-carbo').textContent = Math.round(total.carbo) + 'g';
-  document.getElementById('h-gord').textContent = Math.round(total.gord) + 'g';
-  const totalFibra = cafe.fibra + pic.fibra;
-  document.getElementById('h-fibra').textContent = Math.round(totalFibra) + 'g';
-  document.getElementById('h-fibra').style.color = totalFibra >= 38 ? 'var(--green)' : totalFibra >= 25 ? 'var(--orange)' : 'var(--red)';
-
-  // Alertas micronutrientes
-  renderAlerts(calcMicros(cafeGrams, picGrams));
-
-  // Section kcal
-  document.getElementById('cafe-kcal-sub').textContent = Math.round(cafe.kcal) + ' kcal';
-  document.getElementById('pic-kcal-sub').textContent = Math.round(pic.kcal) + ' kcal';
-
-  // Micros
-  const micros = calcMicros(cafeGrams, picGrams);
-  renderMicros(micros);
-  // Persistir
-  saveToStorage();
+// ── ALERTAS ───────────────────────────────────────────────────────────────
+function renderAlerts(t){
+  const panel=document.getElementById('alert-panel'),titleEl=document.getElementById('alert-title'),bodyEl=document.getElementById('alert-body');
+  bodyEl.innerHTML='';panel.classList.remove('issues','ok');
+  const gi={};MGROUPS.forEach(g=>gi[g.title]=[]);
+  let tot=0;
+  MGROUPS.forEach(grp=>grp.keys.forEach(k=>{
+    const pct=(t[k]||0)/IDR[k]*100;
+    if(pct<70){gi[grp.title].push({k,pct,lvl:pct<50?'d':'w'});tot++;}
+  }));
+  panel.style.display='block';
+  if(!tot){panel.classList.add('ok');titleEl.style.color='var(--gr)';titleEl.textContent='✓ TODOS OS MICRONUTRIENTES DENTRO DO RECOMENDADO';return;}
+  panel.classList.add('issues');titleEl.style.color='var(--rd)';titleEl.textContent='⚠ MICRONUTRIENTES ABAIXO DO RECOMENDADO';
+  MGROUPS.forEach(grp=>{
+    const issues=gi[grp.title];if(!issues.length)return;
+    const d=document.createElement('div');
+    d.innerHTML=`<div class=ag-title style="color:${grp.color}">${grp.title}</div>`;
+    const tags=document.createElement('div');tags.className='atags';
+    issues.sort((a,b)=>a.pct-b.pct).forEach(({k,pct,lvl})=>{
+      const tag=document.createElement('div');tag.className='atag '+lvl;
+      tag.textContent=(lvl==='d'?'✕ ':'! ')+MLABELS[k]+' · '+Math.round(pct)+'%';
+      tags.appendChild(tag);
+    });
+    d.appendChild(tags);bodyEl.appendChild(d);
+  });
 }
 
-// ─────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────
-const OBSERVACOES = [
-  {
-    icon: '🧂', level: 'info',
-    title: 'SAL IODADO — Não substituir',
-    text: 'O sal iodado convencional fornece ~200ug de iodo/dia (5g). NÃO usar sal rosa do Himalaia nem sal marinho sem iodação — ambos carecem de iodo. A calculadora já contabiliza essa contribuição automaticamente no micronutriente Iodo.'
-  },
-  {
-    icon: '☀️', level: 'urgente',
-    title: 'VITAMINA D3 — Exame urgente',
-    text: 'Nível base: 11,5 ng/mL (out/2025). Suplementando 7.000 UI/dia há +5 meses. Refazer 25(OH)D imediatamente. Meta: 40–60 ng/mL. A calculadora soma 175ug (7.000 UI) ao total diário de D3.'
-  },
-  {
-    icon: '🦴', level: 'alerta',
-    title: 'K2-MK7 — Verificar rótulo',
-    text: 'Usar SOMENTE forma All-Trans MK-7 (verificar no rótulo). Forma cis é biologicamente inativa. Marcas confiáveis: Bigens (M.Labs) ou Lauton Clinical. Evitar revendedores de marketplace. Suplemento de 150ug/dia está somado na calculadora.'
-  },
-  {
-    icon: '🐟', level: 'info',
-    title: 'ÔMEGA-3 — Forma TG vs EE',
-    text: 'Essential Nutrition Super Omega-3 TG. Forma TG (triglicerídeos) tem 30% mais absorção que éster etílico (EE). Certificação IFOS 5 estrelas. Os 2g/dia de EPA+DHA estão somados na calculadora como "Ômega-3 (+supl)".'
-  },
-  {
-    icon: '🧠', level: 'info',
-    title: 'CREATINA — 10g/dia (protocolo Rhonda Patrick)',
-    text: 'Acima de 5g/dia, parte atravessa a barreira hematoencefálica — benefício cognitivo adicional. Pode dissolver no café quente sem degradação. Em dias de privação de sono ou viagem: aumentar para 20g.'
-  },
-  {
-    icon: '💊', level: 'info',
-    title: 'MAGNÉSIO — Dividir manhã e noite',
-    text: 'Sanavita Tri Complex: 1 cap malato pela manhã (energizante, suporta ciclo de Krebs) + 1 cap bisglicinato à noite (calmante, melhora sono, reduz rebote do Venvanse). Não tomar as 2 cápsulas juntas de manhã.'
-  },
-  {
-    icon: '🥚', level: 'info',
-    title: 'OVOS — 4/dia e colesterol',
-    text: '4 ovos/dia fornecem ~560mg de colina (IDR: 550mg) e ~720mg de colesterol. O colesterol alimentar tem impacto menor na saúde cardiovascular do que gordura saturada. Monitorar LDL nos exames de rotina. A yema é essencial — não usar só claras.'
-  },
-  {
-    icon: '🌰', level: 'alerta',
-    title: 'CASTANHA-DO-PARÁ — Máximo 1/dia',
-    text: 'Uma unidade (~5g) fornece ~96ug de selênio — 175% da IDR. Consumo excessivo causa selenose (queda de cabelo, unhas frágeis, toxicidade neurológica). Limite: 1 castanha por dia. A calculadora usa 5g como padrão.'
-  },
-  {
-    icon: '🫘', level: 'info',
-    title: 'FEIJÃO-BRANCO — Cozido (lata)',
-    text: 'Os valores nutricionais da calculadora usam feijão-branco JÁ COZIDO (lata escorrida ou panela). 150g cozido ≠ 150g cru seco. Se usar feijão seco e cozinhar em casa, use ~60g de feijão seco cru para obter ~150g cozido.'
-  },
-  {
-    icon: '🥑', level: 'info',
-    title: 'ÔMEGA-6:ÔMEGA-3 — Ratio corrigido',
-    text: 'Protocolo atual: ratio ~5:1 (meta: 4:1). Era 47:1 antes da troca do girassol por amêndoas. Ômega-6 das amêndoas (30g) = ~5g vs girassol = ~23g. A calculadora calcula o ratio a partir dos alimentos + suplemento de 2g EPA+DHA.'
-  },
-  {
-    icon: '📅', level: 'urgente',
-    title: 'EXAME — Índice Ômega-3',
-    text: 'Agendado: 04/05/2026. Mede percentual de EPA+DHA nas hemácias — marcador mais preciso para calibrar dose. Meta: acima de 8% (ref. Dra. Rhonda Patrick).'
-  },
+// ── COLLAPSIBLE ───────────────────────────────────────────────────────────
+function tog(id){document.getElementById(id).classList.toggle('collapsed');}
+
+// ── OBSERVAÇÕES ───────────────────────────────────────────────────────────
+const OBS=[
+  {icon:'🧂',lv:'info',title:'SAL IODADO — Não substituir',text:'R1 (5g) + R2 (10g) = ~600µg iodo/dia — dentro do limite seguro (1.100µg/dia OMS). NÃO usar sal rosa do Himalaia, sal marinho ou fleur de sel. Sódio total: ~5.800mg — acima da IDR. Monitorar PA regularmente.'},
+  {icon:'☀️',lv:'urgente',title:'VITAMINA D3 — Exame urgente',text:'Base: 11,5 ng/mL (out/2025). Suplementando 7.000 UI/dia há +5 meses. Refazer 25(OH)D imediatamente. Meta: 40–60 ng/mL.'},
+  {icon:'🦴',lv:'alerta',title:'K2-MK7 — Verificar rótulo',text:'Usar SOMENTE All-Trans MK-7. Marcas: Bigens (M.Labs) ou Lauton Clinical. Forma cis é inativa. Co-obrigatória com D3.'},
+  {icon:'🐟',lv:'info',title:'ÔMEGA-3 — Exame 04/05/2026',text:'Índice ômega-3 nas hemácias. Meta >8%. Forma TG tem 30% mais absorção que éster etílico. IFOS 5 estrelas.'},
+  {icon:'🧠',lv:'info',title:'CREATINA — 10g/dia',text:'Atravessa barreira hematoencefálica acima de 5g/dia. Benefício cognitivo documentado especialmente com privação de sono.'},
+  {icon:'💊',lv:'info',title:'MAGNÉSIO — Manhã e noite',text:'1 cap manhã (dimalato — energia) + 1 cap noite (bisglicinato — sono, reduz rebote do Venvanse). Não tomar ambas juntas.'},
+  {icon:'🌰',lv:'alerta',title:'CASTANHA — Máximo 1/dia',text:'5g = ~96µg selênio (175% IDR). Excesso: selenose (queda de cabelo, toxicidade neurológica). Não aumentar a dose.'},
 ];
 
-function renderObservacoes() {
-  const list = document.getElementById('obs-list');
-  if (!list) return;
-  list.innerHTML = '';
-  OBSERVACOES.forEach(obs => {
-    const colors = {
-      urgente: { bg:'rgba(255,71,87,0.07)', border:'rgba(255,71,87,0.3)', title:'var(--red)' },
-      alerta:  { bg:'rgba(255,165,2,0.07)', border:'rgba(255,165,2,0.3)', title:'var(--orange)' },
-      info:    { bg:'rgba(71,200,255,0.05)', border:'rgba(71,200,255,0.2)', title:'var(--blue)' },
-    }[obs.level] || {};
-    const div = document.createElement('div');
-    div.style.cssText = `background:${colors.bg};border:1px solid ${colors.border};border-radius:10px;padding:12px 14px;margin-bottom:8px;`;
-    div.innerHTML = `
-      <div style="font-size:13px;font-weight:600;color:${colors.title};margin-bottom:5px;">${obs.icon} ${obs.title}</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.7;">${obs.text}</div>
-    `;
-    list.appendChild(div);
+function renderObs(){
+  const list=document.getElementById('obs-list');
+  const cols={urgente:{bg:'rgba(255,71,87,.07)',bd:'rgba(255,71,87,.3)',c:'var(--rd)'},alerta:{bg:'rgba(255,165,2,.07)',bd:'rgba(255,165,2,.3)',c:'var(--or)'},info:{bg:'rgba(71,200,255,.05)',bd:'rgba(71,200,255,.2)',c:'var(--bl)'}};
+  OBS.forEach(o=>{
+    const cl=cols[o.lv];
+    const d=document.createElement('div');d.className='ocard';
+    d.style.cssText=`background:${cl.bg};border-color:${cl.bd};`;
+    d.innerHTML=`<div class=otitle style="color:${cl.c}">${o.icon} ${o.title}</div><div class=otext>${o.text}</div>`;
+    list.appendChild(d);
   });
 }
 
-function renderAlerts(totals) {
-  const panel = document.getElementById('alert-panel');
-  const titleEl = document.getElementById('alert-panel-title');
-  const groupsEl = document.getElementById('alert-groups');
-  groupsEl.innerHTML = '';
-  panel.classList.remove('has-issues','all-ok');
-
-  // Mapeia cada key ao seu grupo
-  const KEY_TO_GROUP = {};
-  MICRO_GROUPS.forEach(g => g.keys.forEach(k => KEY_TO_GROUP[k] = g));
-
-  // Coleta issues por grupo
-  const groupIssues = {};
-  MICRO_GROUPS.forEach(g => groupIssues[g.title] = []);
-
-  let totalIssues = 0;
-  MICRO_GROUPS.forEach(group => {
-    group.keys.forEach(k => {
-      const pct = (totals[k] || 0) / IDR[k] * 100;
-      if (pct < 70) {
-        groupIssues[group.title].push({ key: k, pct, level: 'danger' });
-        totalIssues++;
-      } else if (pct < 100) {
-        groupIssues[group.title].push({ key: k, pct, level: 'warn' });
-        totalIssues++;
-      }
-    });
+// ── INIT ──────────────────────────────────────────────────────────────────
+(()=>{
+  const l1=document.getElementById('r1-list');R1.forEach(i=>l1.appendChild(mkRow(i,g1)));
+  const l2=document.getElementById('r2-list');R2.forEach(i=>l2.appendChild(mkRow(i,g2)));
+  const sl=document.getElementById('supl-list');
+  SUPLS.forEach(s=>{
+    const r=document.createElement('div');r.className='srow';
+    r.innerHTML=`<div class=sname>${s.name}</div><div class=sdose style="color:${s.color}">${s.dose}</div>`;
+    r.addEventListener('click',()=>openModal(s.name,s.info));
+    sl.appendChild(r);
   });
-
-  panel.style.display = 'block';
-
-  if (totalIssues === 0) {
-    panel.classList.add('all-ok');
-    titleEl.style.color = 'var(--green)';
-    titleEl.textContent = '✓ TODOS OS MICRONUTRIENTES DENTRO DO RECOMENDADO';
-    groupsEl.innerHTML = '';
-    return;
-  }
-
-  panel.classList.add('has-issues');
-  titleEl.style.color = 'var(--red)';
-  titleEl.textContent = '⚠ MICRONUTRIENTES ABAIXO DO RECOMENDADO';
-
-  MICRO_GROUPS.forEach(group => {
-    const issues = groupIssues[group.title];
-    if (issues.length === 0) return;
-
-    const groupDiv = document.createElement('div');
-
-    const titleDiv = document.createElement('div');
-    titleDiv.className = 'alert-group-title';
-    titleDiv.style.color = group.color;
-    titleDiv.textContent = group.title;
-    groupDiv.appendChild(titleDiv);
-
-    const tagsDiv = document.createElement('div');
-    tagsDiv.className = 'alert-tags';
-
-    issues.sort((a,b) => a.pct - b.pct).forEach(({ key, pct, level }) => {
-      const tag = document.createElement('div');
-      tag.className = 'alert-tag ' + level;
-      const icon = level === 'danger' ? '✕' : '!';
-      tag.innerHTML = `<span>${icon}</span>${MICRO_LABELS[key]} · ${Math.round(pct)}%`;
-      tagsDiv.appendChild(tag);
-    });
-
-    groupDiv.appendChild(tagsDiv);
-    groupsEl.appendChild(groupDiv);
-  });
-}
-
-// ─────────────────────────────────────────────
-// ESTADO EXTRA — alimentos adicionados dinamicamente
-// ─────────────────────────────────────────────
-let extraCafe = {};   // { id: grams }
-let extraPic  = {};
-let extraDB   = {};   // DB dos alimentos manuais/extras adicionados
-let modalTarget = ''; // 'cafe' ou 'pic'
-
-function getExtraGrams(target) { return target === 'cafe' ? extraCafe : extraPic; }
-function getExtraList(target)  {
-  const grams = getExtraGrams(target);
-  return Object.keys(grams).map(id => ({ id }));
-}
-
-// ─────────────────────────────────────────────
-// MODAL
-// ─────────────────────────────────────────────
-function openModal(target) {
-  modalTarget = target;
-  document.getElementById('modal-title').textContent =
-    target === 'cafe' ? 'ADICIONAR AO CAFÉ' : 'ADICIONAR AO PICADINHO';
-  document.getElementById('modal-search').value = '';
-  document.getElementById('search-results').innerHTML = '';
-  // limpar form manual
-
-  document.getElementById('food-modal').classList.add('open');
-  setTimeout(() => document.getElementById('modal-search').focus(), 300);
-}
-
-function closeModal() {
-  document.getElementById('food-modal').classList.remove('open');
-}
-
-function handleModalBgClick(e) {
-  if (e.target === document.getElementById('food-modal')) closeModal();
-}
-
-// Busca em tempo real
-const USDA_KEY = 'tJQmDY4tjc07NPYSlSdOdV00yDQHujRzxbc8WK1d';
-let searchTimer = null;
-
-// Mapeamento nutrientes USDA → keys internas
-const USDA_MAP = {
-  'Energy':                       'kcal',
-  'Protein':                      'prot',
-  'Carbohydrate, by difference':  'carbo',
-  'Total lipid (fat)':            'gord',
-  'Fiber, total dietary':         'fibra_val',
-  'Vitamin A, RAE':               'vitA',
-  'Vitamin C, total ascorbic acid':'vitC',
-  'Vitamin D (D2 + D3)':         'vitD',
-  'Vitamin E (alpha-tocopherol)': 'vitE',
-  'Vitamin K (phylloquinone)':    'vitK1',
-  'Vitamin K (Menaquinone-4)':    'vitK2',
-  'Thiamin':                      'vitB1',
-  'Riboflavin':                   'vitB2',
-  'Niacin':                       'vitB3',
-  'Pantothenic acid':             'vitB5',
-  'Vitamin B-6':                  'vitB6',
-  'Biotin':                       'vitB7',
-  'Folate, total':                'vitB9',
-  'Vitamin B-12':                 'vitB12',
-  'Choline, total':               'colina',
-  'Calcium, Ca':                  'calcio',
-  'Iron, Fe':                     'ferro',
-  'Magnesium, Mg':                'magnesio',
-  'Phosphorus, P':                'fosforo',
-  'Potassium, K':                 'potassio',
-  'Sodium, Na':                   'sodio',
-  'Zinc, Zn':                     'zinco',
-  'Copper, Cu':                   'cobre',
-  'Manganese, Mn':                'manganes',
-  'Selenium, Se':                 'selenio',
-  'Iodine, I':                    'iodo',
-  'Chromium, Cr':                 'cromo',
-  'Molybdenum, Mo':               'molibdenio',
-  'Fatty acids, total polyunsaturated': 'omega6',
-  'Fatty acids, total n-3 polyunsaturated': 'omega3',
-};
-
-function parseUSDAFood(food) {
-  const nutrients = {};
-  (food.foodNutrients || []).forEach(n => {
-    const key = USDA_MAP[n.nutrientName];
-    if (key && n.value != null) nutrients[key] = n.value;
-  });
-
-  const fibra = nutrients['fibra_val'] || 0;
-  delete nutrients['fibra_val'];
-
-  return {
-    name: food.description,
-    unit: 'g',
-    kcal:  nutrients.kcal  || 0,
-    prot:  nutrients.prot  || 0,
-    carbo: nutrients.carbo || 0,
-    gord:  nutrients.gord  || 0,
-    _fibra: fibra,
-    // micros
-    vitA: nutrients.vitA||0, vitC: nutrients.vitC||0,
-    vitD: nutrients.vitD||0, vitE: nutrients.vitE||0,
-    vitK1: nutrients.vitK1||0, vitK2: nutrients.vitK2||0,
-    vitB1: nutrients.vitB1||0, vitB2: nutrients.vitB2||0,
-    vitB3: nutrients.vitB3||0, vitB5: nutrients.vitB5||0,
-    vitB6: nutrients.vitB6||0, vitB7: nutrients.vitB7||0,
-    vitB9: nutrients.vitB9||0, vitB12: nutrients.vitB12||0,
-    colina: nutrients.colina||0,
-    calcio: nutrients.calcio||0, ferro: nutrients.ferro||0,
-    magnesio: nutrients.magnesio||0, fosforo: nutrients.fosforo||0,
-    potassio: nutrients.potassio||0, sodio: nutrients.sodio||0,
-    zinco: nutrients.zinco||0, cobre: nutrients.cobre||0,
-    manganes: nutrients.manganes||0, selenio: nutrients.selenio||0,
-    iodo: nutrients.iodo||0, cromo: nutrients.cromo||0,
-    molibdenio: nutrients.molibdenio||0,
-    omega3: nutrients.omega3||0, omega6: nutrients.omega6||0,
-    // aliases
-    folato: nutrients.vitB9||0, biotina: nutrients.vitB7||0,
-  };
-}
-
-function renderSearchResults(matches, resultsEl, isUSDA=false) {
-  resultsEl.innerHTML = '';
-  if (matches.length === 0) {
-    resultsEl.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 12px;">Nenhum resultado. Cadastre abaixo ↓</div>';
-    return;
-  }
-  matches.forEach(({ id, d, fdcId, raw }) => {
-    const item = document.createElement('div');
-    item.className = 'search-result-item';
-    const badge = isUSDA ? '<span style="font-size:9px;background:rgba(232,255,71,0.15);color:var(--accent);padding:2px 6px;border-radius:4px;margin-left:6px;">USDA</span>' : '';
-    item.innerHTML = `
-      <span>${d.name}${badge}</span>
-      <span class="search-result-kcal">${Math.round(d.kcal)} kcal/100g</span>
-    `;
-    // Capturar target no momento do clique, não depois
-    const capturedTarget = modalTarget;
-    item.addEventListener('click', () => {
-      if (isUSDA && raw) FIBRA_DB[id] = raw._fibra || 0;
-      addFoodToTarget(id, d, capturedTarget);
-      closeModal();
-    });
-    resultsEl.appendChild(item);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const searchInput = document.getElementById('modal-search');
-  const resultsEl   = document.getElementById('search-results');
-
-  searchInput.addEventListener('input', function() {
-    clearTimeout(searchTimer);
-    const q = this.value.trim();
-    resultsEl.innerHTML = '';
-    if (q.length < 2) return;
-
-    // 1) Busca local imediata
-    const allDB = { ...DB, ...extraDB };
-    const localMatches = Object.entries(allDB)
-      .filter(([id, d]) => d.name.toLowerCase().includes(q.toLowerCase()))
-      .slice(0, 5)
-      .map(([id, d]) => ({ id, d }));
-
-    if (localMatches.length > 0) renderSearchResults(localMatches, resultsEl, false);
-
-    // 2) Busca USDA com debounce 500ms
-    resultsEl.innerHTML += '<div id="usda-loading" style="font-size:11px;color:var(--muted);padding:6px 12px;">🔍 Buscando na USDA FoodData Central...</div>';
-
-    searchTimer = setTimeout(async () => {
-      const loadingEl = document.getElementById('usda-loading');
-      try {
-        const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(q)}&pageSize=8&dataType=Foundation,SR%20Legacy&api_key=${USDA_KEY}`;
-        const res  = await fetch(url);
-        const data = await res.json();
-
-        if (loadingEl) loadingEl.remove();
-        resultsEl.innerHTML = '';
-
-        // Re-renderizar locais
-        if (localMatches.length > 0) {
-          const localHeader = document.createElement('div');
-          localHeader.style.cssText = 'font-size:9px;color:var(--muted);letter-spacing:1px;padding:4px 12px 2px;text-transform:uppercase;';
-          localHeader.textContent = 'Banco local';
-          resultsEl.appendChild(localHeader);
-          renderSearchResults(localMatches, resultsEl, false);
-        }
-
-        const usdaFoods = (data.foods || []).slice(0, 8);
-        if (usdaFoods.length > 0) {
-          const usdaHeader = document.createElement('div');
-          usdaHeader.style.cssText = 'font-size:9px;color:var(--accent);letter-spacing:1px;padding:6px 12px 2px;text-transform:uppercase;';
-          usdaHeader.textContent = '🌐 USDA FoodData Central';
-          resultsEl.appendChild(usdaHeader);
-
-          const usdaMatches = usdaFoods.map(food => {
-            const id = 'usda_' + food.fdcId;
-            const d  = parseUSDAFood(food);
-            extraDB[id] = d;
-            FIBRA_DB[id] = d._fibra || 0;
-            return { id, d, fdcId: food.fdcId, raw: d };
-          });
-
-          const usdaContainer = document.createElement('div');
-          resultsEl.appendChild(usdaContainer);
-          renderSearchResults(usdaMatches, usdaContainer, true);
-        }
-
-        if (localMatches.length === 0 && usdaFoods.length === 0) {
-          resultsEl.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 12px;">Nenhum resultado. Cadastre abaixo ↓</div>';
-        }
-
-      } catch(e) {
-        if (loadingEl) loadingEl.remove();
-        if (localMatches.length === 0) {
-          resultsEl.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 12px;">Erro na busca USDA. Verifique sua conexão ou cadastre manualmente.</div>';
-        }
-      }
-    }, 500);
-  });
-});
-
-function addFoodFromDB(id, d) { addFoodToTarget(id, d, modalTarget); }
-function addFoodToTarget(id, d, target) {
-  const gramsObj = target === 'cafe' ? extraCafe : extraPic;
-  const listEl   = document.getElementById(target === 'cafe' ? 'cafe-list' : 'pic-list');
-
-  // Se já existe, apenas incrementa
-  if (gramsObj[id] !== undefined) {
-    gramsObj[id] += 100;
-    const existing = listEl.querySelector(`[data-id="${id}"]`);
-    if (existing) {
-      const stepVal = existing.querySelector('.step-val');
-      if (stepVal) stepVal.textContent = gramsObj[id];
-    }
-    updateAll(); return;
-  }
-
-  gramsObj[id] = d.defaultGrams || 100;
-  if (!DB[id]) extraDB[id] = d;
-
-  const extraItem = { id };
-  const row = renderIngRow(extraItem, gramsObj, updateAll, true);
-  listEl.appendChild(row);
-  updateAll();
-  markDirty();
-}
-
-
-// ─── SALVAR ALTERAÇÕES ───
-let isDirty = false;
-function markDirty() {
-  if (isDirty) return;
-  isDirty = true;
-  document.getElementById('save-btn').classList.add('dirty');
-}
-function buildSaveBlob() {
-  const updatedCafe = CAFE.map(item => ({ id: item.id, grams: cafeGrams[item.id] }));
-  const updatedPic  = PICADINHO.map(item => ({ id: item.id, grams: picGrams[item.id] }));
-  let html = document.documentElement.outerHTML;
-  html = html.replace(/const CAFE = \[[\s\S]*?\];/, 'const CAFE = ' + JSON.stringify(updatedCafe, null, 2) + ';');
-  html = html.replace(/const PICADINHO = \[[\s\S]*?\];/, 'const PICADINHO = ' + JSON.stringify(updatedPic, null, 2) + ';');
-  return new Blob([html], { type: 'text/html' });
-}
-
-function showSaveToast(msg, ok) {
-  if (ok === undefined) ok = true;
-  var t = document.getElementById('save-toast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'save-toast';
-    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid;font-size:12px;padding:8px 20px;border-radius:20px;z-index:9999;opacity:0;transition:opacity 0.3s;font-family:DM Sans,sans-serif;white-space:nowrap;';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  t.style.borderColor = ok ? 'var(--green)' : 'var(--orange)';
-  t.style.color = ok ? 'var(--green)' : 'var(--orange)';
-  t.style.opacity = '1';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(function(){ t.style.opacity = '0'; }, 2800);
-}
-
-var _fileHandle = null;
-
-async function saveChanges() {
-  var blob = buildSaveBlob();
-
-  if (_fileHandle) {
-    try {
-      var w = await _fileHandle.createWritable();
-      await w.write(blob);
-      await w.close();
-      isDirty = false;
-      document.getElementById('save-btn').classList.remove('dirty');
-      showSaveToast('✓ Arquivo salvo');
-      return;
-    } catch(e) { _fileHandle = null; }
-  }
-
-  if (window.showSaveFilePicker) {
-    try {
-      _fileHandle = await window.showSaveFilePicker({
-        suggestedName: 'calculadora_nutricional.html',
-        types: [{ description: 'HTML', accept: { 'text/html': ['.html'] } }],
-      });
-      var w2 = await _fileHandle.createWritable();
-      await w2.write(blob);
-      await w2.close();
-      isDirty = false;
-      document.getElementById('save-btn').classList.remove('dirty');
-      showSaveToast('✓ Arquivo salvo');
-      return;
-    } catch(e) {
-      if (e.name === 'AbortError') return;
-      _fileHandle = null;
-    }
-  }
-
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'calculadora_nutricional.html';
-  a.click();
-  isDirty = false;
-  document.getElementById('save-btn').classList.remove('dirty');
-  showSaveToast('Download iniciado — substitua o arquivo original', false);
-}
-
-
-function toggleSection(id) {
-  const section = document.getElementById(id);
-  section.classList.toggle('collapsed');
-}
-
-function init() {
-  // Carregar do localStorage (restaura valores salvos)
-  loadFromStorage();
-
-  // Café
-  const cafeList = document.getElementById('cafe-list');
-  CAFE.forEach(item => {
-    const row = renderIngRow(item, cafeGrams, updateAll);
-    cafeList.appendChild(row);
-  });
-
-  // Picadinho
-  const picList = document.getElementById('pic-list');
-  PICADINHO.forEach(item => {
-    const row = renderIngRow(item, picGrams, updateAll);
-    picList.appendChild(row);
-  });
-
-  // Restaurar alimentos extras adicionados pelo usuário
-  Object.keys(extraCafe).forEach(id => {
-    const d = DB[id] || extraDB[id]; if (!d) return;
-    const row = renderIngRow({ id }, extraCafe, updateAll, true);
-    cafeList.appendChild(row);
-  });
-  Object.keys(extraPic).forEach(id => {
-    const d = DB[id] || extraDB[id]; if (!d) return;
-    const row = renderIngRow({ id }, extraPic, updateAll, true);
-    picList.appendChild(row);
-  });
-
-  // Suplementos
-  const suplList = document.getElementById('supl-list');
-  SUPLS.forEach(s => {
-    const row = document.createElement('div');
-    row.className = 'supl-row';
-    row.innerHTML = `
-      <div class="supl-name">${s.name}</div>
-      <div class="supl-dose" style="color:${s.color}">${s.dose}</div>
-    `;
-    suplList.appendChild(row);
-  });
-
-  updateAll();
-  renderObservacoes();
-}
-
-init();
+  renderObs();updateAll();
+})();
 </script>
 </body>
 </html>
